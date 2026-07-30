@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIMEI - SUNA | Référentiel Clinique d'Évaluation Psychologique au Combat</title>
+    <meta name="description" content="Application clinique d'évaluation des aptitudes psychologiques au combat, génération de scénarios et calcul du barème SEIMEI - SUNA.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- App CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Top Institutional Header -->
+        <header class="main-header" id="header">
+            <div class="header-emblem left">
+                <svg viewBox="0 0 100 100" class="emblem-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
+                </svg>
+            </div>
+
+            <div class="header-titles">
+                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
+                <h1 class="header-main-title">SEIMEI – SUNA</h1>
+                <h2 class="header-sub-title">RÉFÉRENTIEL CLINIQUE D'ÉVALUATION PSYCHOLOGIQUE</h2>
+                <div class="header-subtitle-tag">ÉVALUATION DES APTITUDES PSYCHOLOGIQUES AU COMBAT</div>
+            </div>
+
+            <div class="header-emblem right">
+                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
+                <span class="emblem-tag">SEIMEI 葉</span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="nav-tabs" aria-label="Navigation principale">
+            <button class="nav-btn active" data-tab="tab-patient">
+                <i class="fa-solid fa-user-shield"></i>
+                <span>1. Patient & Entretien</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-scenarios">
+                <i class="fa-solid fa-dice-d20"></i>
+                <span>2. Mises en Situation</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-bareme">
+                <i class="fa-solid fa-list-check"></i>
+                <span>3. Barème Clinique</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-diagnostics">
+                <i class="fa-solid fa-sliders"></i>
+                <span>4. Diagnostics & "Autre"</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-resultats">
+                <i class="fa-solid fa-calculator"></i>
+                <span>5. Calcul & Synthèse</span>
+            </button>
+            <button class="nav-btn highlight-tab" data-tab="tab-rapport">
+                <i class="fa-solid fa-file-contract"></i>
+                <span>6. Rapport & Vues</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-historique">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>Historique</span>
+            </button>
+        </nav>
+
+        <main class="content-area">
+            <!-- TAB 1: PATIENT & ENTRETIEN -->
+            <section id="tab-patient" class="tab-pane active">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-id-card"></i> Identification du Shinobi / Patient</h2>
+                    <p>Saisissez les informations administratives et enregistrez les premières impressions qualitatives de l'entretien clinique.</p>
+                </div>
+
+                <div class="grid-2col">
+                    <!-- Form Card -->
+                    <div class="card card-glass">
+                        <div class="card-title"><i class="fa-solid fa-user-pen"></i> Fiche d'Identité</div>
+                        <form id="form-patient" class="form-grid">
+                            <div class="form-group">
+                                <label for="patient-name">Nom & Prénom du Shinobi <span class="required">*</span></label>
+                                <input type="text" id="patient-name" placeholder="Ex: Gaara du Désert / Kankuro" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="patient-unit">Équipe / Unité <span style="font-weight: normal; font-size: 11px; opacity: 0.7; color: var(--sand-primary);">(Facultatif)</span></label>
+                                <input type="text" id="patient-unit" placeholder="Ex: Escouade d'Élite #3 / Section Médicale (Facultatif)">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="patient-grade">Grade Actuel <span class="required">*</span></label>
+                                <select id="patient-grade" required>
+                                    <option value="Genin">Genin</option>
+                                    <option value="Genin Confirmé">Genin Confirmé</option>
+                                    <option value="Chunin" selected>Chunin</option>
+                                    <option value="Konin">Konin</option>
+                                    <option value="Tokubetsu Jonin">Tokubetsu Jonin</option>
+                                    <option value="Jonin">Jonin</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="patient-age">Âge</label>
+                                <input type="number" id="patient-age" min="10" max="80" value="19">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="patient-gender">Sexe</label>
+                                <select id="patient-gender">
+                                    <option value="M">Masculin (M)</option>
+                                    <option value="F">Féminin (F)</option>
+                                    <option value="Autre">Autre / Non spécifié</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="eval-date">Date de l'Évaluation</label>
+                                <input type="date" id="eval-date">
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="evaluator-name">Psychologue Évaluateur <span class="required">*</span></label>
+                                <input type="text" id="evaluator-name" placeholder="Dr. SEIMEI / Psychologue Référent Suna" required>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Qualitative Observations Card (Section 1) -->
+                    <div class="card card-glass">
+                        <div class="card-title">
+                            <i class="fa-solid fa-comments"></i> 1. Présentation et Entretien Clinique
+                        </div>
+                        <p class="section-desc">
+                            Le shinobi dispose d'un temps de parole libre pour se présenter. Le psychologue observe sans l'interrompre, puis pose des questions complémentaires.
+                        </p>
+
+                        <div class="qualitative-list">
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-comm" checked>
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Capacité à communiquer</strong> (Fluidité et clarté de l'expression)</span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-coher" checked>
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Cohérence du discours</strong> (Logique et structure des propos)</span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-emotions" checked>
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Gestion des émotions durant l'entretien</strong></span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-corporel" checked>
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Langage corporel</strong> (Posture, regard, agitation)</span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-sincerite" checked>
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Sincérité apparente et introspection</strong></span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-silences">
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Réaction maîtrisée face aux silences</strong></span>
+                            </label>
+                            <label class="check-container">
+                                <input type="checkbox" id="obs-sensibles">
+                                <span class="checkmark"></span>
+                                <span class="check-text"><strong>Stabilité face aux questions sensibles / traumatiques</strong></span>
+                            </label>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fa-solid fa-eye"></i>
+                            <span><strong>Note institutionnelle :</strong> Cette première impression influence l'appréciation globale sans attribuer de points visibles au patient.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: MISES EN SITUATION ALÉATOIRES -->
+            <section id="tab-scenarios" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-dice"></i> 3. Mises en Situation Aléatoires & Banque de Scénarios</h2>
+                    <p>Le site sélectionne aléatoirement 2 à 3 situations parmi la banque de scénarios pour évaluer le raisonnement, la gestion émotionnelle et les choix éthiques du shinobi.</p>
+                </div>
+
+                <div class="generator-toolbar card card-glass">
+                    <div class="toolbar-actions">
+                        <button type="button" class="btn btn-primary btn-glow" id="btn-generate-scenarios">
+                            <i class="fa-solid fa-shuffle"></i> Générer 2 à 3 Scénarios Aléatoires
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-custom-scenario">
+                            <i class="fa-solid fa-plus"></i> Ajouter un Scénario Personnalisé
+                        </button>
+                        <span class="count-badge" id="scenarios-count">3 scénarios actifs</span>
+                    </div>
+                    <div class="search-filter-row">
+                        <select id="filter-scenario-cat">
+                            <option value="all">Toutes les catégories</option>
+                            <option value="Dilemme Moral">Dilemme Moral</option>
+                            <option value="Commandement & Discipline">Commandement & Discipline</option>
+                            <option value="Gestion de Crise">Gestion de Crise</option>
+                            <option value="Négociation & Infiltration">Négociation & Infiltration</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="active-scenarios-container" class="scenarios-grid">
+                    <!-- Dynamic scenarios inserted by JS -->
+                </div>
+
+                <!-- Custom Scenario Modal -->
+                <div id="modal-custom-scenario" class="modal-overlay hidden">
+                    <div class="modal-content card">
+                        <div class="modal-header">
+                            <h3><i class="fa-solid fa-feather"></i> Créer un Scénario / Question Personnalisé(e)</h3>
+                            <button class="btn-close" id="btn-close-modal">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="custom-title">Titre de la situation</label>
+                                <input type="text" id="custom-title" placeholder="Ex: Prise d'otage au poste frontière">
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-cat">Catégorie</label>
+                                <select id="custom-cat">
+                                    <option value="Dilemme Moral">Dilemme Moral</option>
+                                    <option value="Commandement & Discipline">Commandement & Discipline</option>
+                                    <option value="Gestion de Crise">Gestion de Crise</option>
+                                    <option value="Négociation & Infiltration">Négociation & Infiltration</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-desc">Description de la mise en situation</label>
+                                <textarea id="custom-desc" rows="3" placeholder="Décrivez le contexte et le dilemme imposé au shinobi..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="custom-eval">Éléments à observer par le psychologue</label>
+                                <input type="text" id="custom-eval" placeholder="Ex: Gestion du stress, réactivité, respect du protocole">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Annuler</button>
+                            <button type="button" class="btn btn-primary" id="btn-save-custom-scenario">Ajouter au test</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: BARÈME CLINIQUE INTERPRÉTABLE (SECTION 2) -->
+            <section id="tab-bareme" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-list-check"></i> 2. Critères d'Appréciation Clinique Interprétables</h2>
+                    <p>Attribuez une note pour chacun des 8 critères fondamentaux (ou utilisez le bouton "Autre" pour saisir un nombre de points personnalisé).</p>
+                </div>
+
+                <div class="score-summary-bar card card-glass">
+                    <div class="summary-metric">
+                        <span class="label">Score Critères (0 à 40)</span>
+                        <span class="value" id="bareme-score-display">0 / 40</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="bareme-progress" style="width: 0%;"></div>
+                    </div>
+                    <div class="summary-status" id="bareme-status-text">Non évalué</div>
+                </div>
+
+                <div id="criteria-cards-container" class="criteria-container">
+                    <!-- 8 Criteria Cards generated via JS -->
+                </div>
+            </section>
+
+            <!-- TAB 4: DIAGNOSTICS PSYCHOLOGIQUES, BONUS & AJUSTEMENT "AUTRE" -->
+            <section id="tab-diagnostics" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-sliders"></i> 4 & 5. Diagnostics (Malus), Bonus & Ajustements Personnalisés ("Autre")</h2>
+                    <p>Identifiez les pathologies (-2 à -6 pts), appliquez les bonus de mérite (+2 pts) ou ajoutez un motif "Autre" sur-mesure (ajout ou retrait de points libre).</p>
+                </div>
+
+                <div class="grid-2col">
+                    <!-- SECTION 4: MALUS -->
+                    <div class="card card-glass">
+                        <div class="card-title text-danger">
+                            <i class="fa-solid fa-circle-minus"></i> 4. Diagnostics Psychologiques (Malus)
+                        </div>
+                        <p class="section-desc">
+                            Chaque diagnostic doit être justifié dans le rapport clinique. Plusieurs diagnostics peuvent être retenus.
+                        </p>
+
+                        <div class="diag-group">
+                            <h4 class="diag-cat-title cat-light"><i class="fa-solid fa-circle"></i> Diagnostics Légers (-2 points)</h4>
+                            <div class="diag-options" id="diag-light-options"></div>
+                        </div>
+
+                        <div class="diag-group">
+                            <h4 class="diag-cat-title cat-moderate"><i class="fa-solid fa-triangle-exclamation"></i> Diagnostics Modérés (-4 points)</h4>
+                            <div class="diag-options" id="diag-moderate-options"></div>
+                        </div>
+
+                        <div class="diag-group">
+                            <h4 class="diag-cat-title cat-severe"><i class="fa-solid fa-radiation"></i> Diagnostics Graves (-6 points)</h4>
+                            <div class="diag-options" id="diag-severe-options"></div>
+                        </div>
+
+                        <div class="form-group margin-top-md">
+                            <label for="malus-justification">Justification Obligatoire des Malus retenus :</label>
+                            <textarea id="malus-justification" rows="3" placeholder="Expliquez la présence des symptômes et l'impact constaté lors des exercices ou de l'entretien..."></textarea>
+                        </div>
+
+                        <div class="malus-total-badge">
+                            Total Malus Standard : <span id="total-malus-display" class="highlight-neg">0 points</span>
+                        </div>
+                    </div>
+
+                    <!-- SECTION 5: BONUS -->
+                    <div class="card card-glass">
+                        <div class="card-title text-success">
+                            <i class="fa-solid fa-award"></i> 5. Bonus Cliniques (Facultatifs)
+                        </div>
+                        <p class="section-desc">
+                            Comportements exceptionnels observés en situation de haute contrainte. Maximum appliqué : <strong>+4 points</strong>.
+                        </p>
+
+                        <div class="bonus-options-list" id="bonus-options"></div>
+
+                        <div class="form-group margin-top-md">
+                            <label for="bonus-justification">Justification des Bonus appliqués :</label>
+                            <textarea id="bonus-justification" rows="3" placeholder="Précisez les actes ou démonstrations de résilience/leadership exceptionnels..."></textarea>
+                        </div>
+
+                        <div class="bonus-total-badge">
+                            Total Bonus Standard : <span id="total-bonus-display" class="highlight-pos">+0 points</span> (Max +4 pts)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION "AUTRE" : AJUSTEMENT DE POINTS EN PLUS OU EN MOINS SUR-MESURE -->
+                <div class="card card-glass margin-top-md" style="border: 2px dashed var(--sand-primary);">
+                    <div class="card-title" style="color: var(--sand-primary);">
+                        <i class="fa-solid fa-circle-plus"></i> <i class="fa-solid fa-circle-minus"></i> 
+                        Ajustements Personnalisés ("Autre" — Ajouter ou Enlever des points librement)
+                    </div>
+                    <p class="section-desc">
+                        Saisissez un motif spécifique et choisissez d'attribuer un bonus supplémentaire (+ points) ou de déduire un malus supplémentaire (- points) non répertorié ci-dessus.
+                    </p>
+
+                    <div class="custom-adjustment-form form-grid" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="custom-adj-label">Motif / Description de l'ajustement "Autre"</label>
+                            <input type="text" id="custom-adj-label" placeholder="Ex: Action d'éclat imprévue / Désobéissance mineure au refuge">
+                        </div>
+                        <div class="form-group">
+                            <label for="custom-adj-type">Action sur le barème</label>
+                            <select id="custom-adj-type">
+                                <option value="add">Ajouter des points (+) [Bonus personnalisé]</option>
+                                <option value="sub">Enlever des points (-) [Malus personnalisé]</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="custom-adj-pts">Nombre de points à appliquer</label>
+                            <input type="number" id="custom-adj-pts" min="1" max="20" value="2">
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end;">
+                            <button type="button" class="btn btn-primary" id="btn-add-custom-adjustment" style="width: 100%; justify-content: center;">
+                                <i class="fa-solid fa-plus-minus"></i> Valider l'Ajustement "Autre"
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Active Custom Adjustments List -->
+                    <div class="custom-adj-list margin-top-md" id="custom-adjustments-list">
+                        <!-- Dynamic list of added custom adjustments -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: CALCUL & SYNTHÈSE -->
+            <section id="tab-resultats" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-square-poll-vertical"></i> 6 & 7. Calcul du Score Final & Décision Finale</h2>
+                    <p>Synthèse algorithmique de l'évaluation clinique conformément au référentiel officiel SEIMEI - SUNA.</p>
+                </div>
+
+                <div class="grid-2col-unequal">
+                    <!-- Gauge and Breakdown Card -->
+                    <div class="card card-glass text-center">
+                        <div class="card-title"><i class="fa-solid fa-gauge-high"></i> Calculateur de Score Final</div>
+                        
+                        <div class="gauge-wrapper">
+                            <div class="score-circle" id="score-circle">
+                                <span class="score-number" id="final-score-val">0</span>
+                                <span class="score-max">/ 50</span>
+                            </div>
+                        </div>
+
+                        <div class="math-breakdown-box">
+                            <div class="math-row">
+                                <span>Appréciation Clinique (Critères)</span>
+                                <strong id="breakdown-crit-val">0 pts</strong>
+                            </div>
+                            <div class="math-row text-success">
+                                <span>+ Bonus Cliniques Standard</span>
+                                <strong id="breakdown-bonus-val">+0 pts</strong>
+                            </div>
+                            <div class="math-row text-danger">
+                                <span>- Malus Diagnostics Standard</span>
+                                <strong id="breakdown-malus-val">-0 pts</strong>
+                            </div>
+                            <div class="math-row" style="color: var(--sand-primary);">
+                                <span>+/- Ajustements "Autre"</span>
+                                <strong id="breakdown-custom-val">0 pts</strong>
+                            </div>
+                            <div class="math-row math-total">
+                                <span>= SCORE FINAL SEIMEI</span>
+                                <strong id="breakdown-total-val">0 / 50</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Outcome Card (Section 7) -->
+                    <div class="card card-glass decision-display-card" id="decision-card">
+                        <div class="card-title"><i class="fa-solid fa-gavel"></i> 7. Décision Finale Clinique</div>
+
+                        <div class="decision-badge-container">
+                            <div class="decision-status-badge" id="decision-badge">SEUILLAGE EN COURS...</div>
+                        </div>
+
+                        <div class="decision-details" id="decision-details">
+                            <h3 id="decision-title">Sélectionnez les réponses dans le barème</h3>
+                            <p id="decision-description">Le score déterminé ajustera automatiquement le statut opérationnel du shinobi.</p>
+                        </div>
+
+                        <div class="thresholds-reference-table margin-top-md">
+                            <h4>Rappel des Barèmes de Décision (0-50 pts)</h4>
+                            <ul>
+                                <li class="range-item r-5" data-range="45-50">
+                                    <span class="range-tag">45 – 50 pts</span>
+                                    <strong>MAINTIEN DU GRADE</strong> — Shinobi apte sans restriction.
+                                </li>
+                                <li class="range-item r-4" data-range="35-44">
+                                    <span class="range-tag">35 – 44 pts</span>
+                                    <strong>MAINTIEN AVEC SUIVI</strong> — Apte avec suivi psychologique régulier.
+                                </li>
+                                <li class="range-item r-3" data-range="25-34">
+                                    <span class="range-tag">25 – 34 pts</span>
+                                    <strong>RESTRICTION TEMPORAIRE</strong> — Mission à risque interdite 7 à 14 jours.
+                                </li>
+                                <li class="range-item r-2" data-range="15-24">
+                                    <span class="range-tag">15 – 24 pts</span>
+                                    <strong>SUSPENSION TEMPORAIRE</strong> — Suspension immédiate des missions.
+                                </li>
+                                <li class="range-item r-1" data-range="0-14">
+                                    <span class="range-tag">0 – 14 pts</span>
+                                    <strong>RÉTROGRADATION TEMPORAIRE</strong> — Rétrogradation au grade inférieur.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 6: RAPPORT CLINIQUE & DOUBLE VUE -->
+            <section id="tab-rapport" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-print"></i> 8, 9 & 10. Générateur de Rapports & Vues Différenciées</h2>
+                    <p>Basculez entre le rapport confidentiel réservé au corps médical et la fiche épurée destinée au Shinobi.</p>
+                </div>
+
+                <div class="report-controls card card-glass">
+                    <div class="view-switcher-toggle">
+                        <span class="switch-label"><i class="fa-solid fa-lock"></i> Vue Confidentielle Psychologue</span>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle-view-shinobi">
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="switch-label"><i class="fa-solid fa-eye-slash"></i> Vue Shinobi / Patient</span>
+                    </div>
+
+                    <div class="report-actions">
+                        <button type="button" class="btn btn-primary" id="btn-save-patient">
+                            <i class="fa-solid fa-floppy-disk"></i> Enregistrer le Dossier
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-print-report">
+                            <i class="fa-solid fa-print"></i> Imprimer / Imprimer en PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Printable Report Box -->
+                <div class="printable-document-wrapper" id="printable-report"></div>
+            </section>
+
+            <!-- TAB 7: HISTORIQUE DES EVALUATIONS -->
+            <section id="tab-historique" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-boxes-packing"></i> Historique des Dossiers Patients Enregistrés</h2>
+                    <p>Consultez, réouvrez ou supprimez les évaluations psychologiques précédentes stockées localement.</p>
+                </div>
+
+                <div class="card card-glass">
+                    <div class="history-toolbar">
+                        <input type="text" id="search-history" placeholder="Rechercher par nom de Shinobi ou psychologue...">
+                        <button type="button" class="btn btn-danger btn-sm" id="btn-clear-history">
+                            <i class="fa-solid fa-trash-can"></i> Vider tout l'historique
+                        </button>
+                    </div>
+
+                    <div class="table-responsive margin-top-md">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Shinobi</th>
+                                    <th>Grade</th>
+                                    <th>Unité</th>
+                                    <th>Score Final</th>
+                                    <th>Décision Clinique</th>
+                                    <th>Psychologue</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="main-footer">
+            <p>RAPPEL INSTITUTIONNEL : CE DOCUMENT N'EST PAS UN TEST AUTOMATISÉ. IL CONSTITUE UN OUTIL CLINIQUE D'AIDE À LA DÉCISION. VOTRE JUGEMENT PROFESSIONNEL FAIT LA DIFFÉRENCE.</p>
+            <div class="footer-legal">ARTICLE 17, 18, 19 DU CODE DE SANTÉ DES SHINOBIS DE SUNAGAKURE • SEIMEI CLINICAL SYSTEM v2.5</div>
+        </footer>
+    </div>
+
+    <!-- App Scripts -->
+    <script src="scenarios.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
