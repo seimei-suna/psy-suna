@@ -715,6 +715,16 @@ input:focus, select:focus, textarea:focus {
     color: var(--sand-light);
 }
 
+/* Sélection neutre (auto-test) : aucune couleur ne doit indiquer si
+   l'option choisie est "bonne" ou "mauvaise" pour ne pas orienter le
+   patient. Les couleurs par niveau (.lvl-*.selected) restent réservées
+   à l'outil psychologue, plus spécifiques et donc prioritaires. */
+.rate-btn.selected {
+    border-color: var(--sand-primary);
+    background: rgba(212, 175, 122, 0.15);
+    color: var(--sand-light);
+}
+
 .rate-btn.selected[data-pts="10"] {
     background: rgba(46, 204, 113, 0.3);
     border-color: var(--status-green);
