@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const container = document.getElementById('at-criteria-container');
         container.innerHTML = CRITERIA_DATA.map(c => {
             const currentVal = state.criteriaScores[c.id] ?? 3;
-            const neutralLabels = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const neutralLabels = ['Oui', '', '', '', '', 'Non'];
             const buttonsHtml = RATING_LEVELS.map((lvl, i) => `
                 <button type="button" class="rate-btn ${currentVal === lvl.pts ? 'selected' : ''}"
                         data-pts="${lvl.pts}" data-id="${c.id}">
