@@ -6,91 +6,13 @@
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // 1. DATABASES & CONSTANTS
+    // CRITERIA_DATA, RATING_LEVELS, BAREME, MALUS_DATA, BONUS_DATA et
+    // DECISIONS viennent du référentiel partagé data.js (chargé avant ce
+    // fichier) — ne pas les redéclarer ici, sous peine de désynchronisation
+    // avec l'auto-test patient et la page de référence gérance.
     // ==========================================
 
-    const CRITERIA_DATA = [
-        {
-            id: 1,
-            title: "Stabilité émotionnelle perçue",
-            desc: "Capacité du shinobi à conserver un équilibre émotionnel face aux événements vécus.",
-            subItems: ["Maîtrise de soi", "Variations émotionnelles", "Capacité à verbaliser son vécu", "Gestion du stress", "Récupération après situation difficile"]
-        },
-        {
-            id: 2,
-            title: "Fiabilité opérationnelle",
-            desc: "Capacité à rester efficace dans des conditions changeantes.",
-            subItems: ["Attention et concentration", "Résistance à la pression", "Rigueur dans l'exécution", "Respect des consignes"]
-        },
-        {
-            id: 3,
-            title: "Engagement envers Sunagakure",
-            desc: "Nature et sincérité de la volonté de servir le village et de protéger ses alliés.",
-            subItems: ["Motivation et engagement", "Loyauté perçue", "Sens du devoir", "Raisons personnelles"]
-        },
-        {
-            id: 4,
-            title: "Discernement sous pression",
-            desc: "Capacité à prendre des décisions adaptées malgré le stress, l'urgence ou l'incertitude.",
-            subItems: ["Jugement tactique", "Contrôle de l'impulsivité", "Analyse des conséquences", "Choix cohérents et adaptés"]
-        },
-        {
-            id: 5,
-            title: "Cohésion avec la hiérarchie",
-            desc: "Qualité des relations professionnelles et respect de la chaîne de commandement.",
-            subItems: ["Communication", "Travail d'équipe", "Respect de la hiérarchie", "Confiance inspirée", "Coopération"]
-        },
-        {
-            id: 6,
-            title: "Capacité d'adaptation",
-            desc: "Capacité à ajuster son comportement face aux imprévus ou aux changements de situation.",
-            subItems: ["Réactivité", "Souplesse mentale", "Gestion de l'imprévu", "Adaptation", "Apprentissage rapide"]
-        },
-        {
-            id: 7,
-            title: "Influence sur son entourage",
-            desc: "Impact du shinobi sur ses coéquipiers et son environnement.",
-            subItems: ["Leadership naturel", "Capacité à rassurer", "Gestion des conflits", "Motivation des autres", "Présence positive"]
-        },
-        {
-            id: 8,
-            title: "Disponibilité psychique au service",
-            desc: "État mental général permettant une reprise sereine et durable du service.",
-            subItems: ["Énergie mentale", "Clarté d'esprit", "Résilience", "Fatigue psychologique", "Préparation au service"]
-        }
-    ];
-
     const SCENARIOS_BANK = (typeof FULL_100_SCENARIOS_BANK !== 'undefined') ? FULL_100_SCENARIOS_BANK : [];
-
-    const MALUS_DATA = {
-        light: [
-            { id: 'm-1', label: 'Stress léger', pts: 2 },
-            { id: 'm-2', label: 'Fatigue mentale', pts: 2 },
-            { id: 'm-3', label: 'Manque de confiance', pts: 2 },
-            { id: 'm-4', label: 'Difficulté de concentration', pts: 2 },
-            { id: 'm-5', label: 'Irritabilité passagère', pts: 2 }
-        ],
-        moderate: [
-            { id: 'm-6', label: 'Stress post-traumatique', pts: 4 },
-            { id: 'm-7', label: 'Culpabilité importante', pts: 4 },
-            { id: 'm-8', label: 'Instabilité émotionnelle', pts: 4 },
-            { id: 'm-9', label: 'Impulsivité', pts: 4 },
-            { id: 'm-10', label: 'Isolement social', pts: 4 }
-        ],
-        severe: [
-            { id: 'm-11', label: 'Refus d\'obéir', pts: 6 },
-            { id: 'm-12', label: 'Hallucinations', pts: 6 },
-            { id: 'm-13', label: 'Perte de contrôle', pts: 6 },
-            { id: 'm-14', label: 'Risque pour l\'équipe', pts: 6 },
-            { id: 'm-15', label: 'Dangerosité potentielle', pts: 6 }
-        ]
-    };
-
-    const BONUS_DATA = [
-        { id: 'b-1', label: 'Sang-froid exceptionnel', desc: 'Maîtrise parfaite lors des crises imprévues', pts: 2 },
-        { id: 'b-2', label: 'Leadership remarquable', desc: 'Mobilisation efficace du groupe', pts: 2 },
-        { id: 'b-3', label: 'Grande résilience', desc: 'Capacité supérieure de récupération', pts: 2 },
-        { id: 'b-4', label: 'Esprit d\'équipe exemplaire', desc: 'Altruisme et soutien constant', pts: 2 }
-    ];
 
     // ==========================================
     // 2. APPLICATION STATE
@@ -116,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
             sensibles: false
         },
         activeScenarios: [],
-        criteriaScores: {}, // { 1: +5, 2: -10, ... } (values from -10 to +10)
+        criteriaScores: {},   // { 1: 5, 2: 3, ... } — 0 à 5 points par critère
+        scenarioScores: {},   // { 'sc-12': 2, ... } — 0 à 3 points par mise en situation
+        firstImpression: 0,   // première impression clinique : -1, 0 ou +1
         selectedMalus: [],
         selectedBonus: [],
         customAdjustments: [],
@@ -126,13 +50,13 @@ document.addEventListener('DOMContentLoaded', () => {
         evaluationsHistory: []
     };
 
-    // Initialize default values for criteria (default to +5)
+    // Valeur par défaut : « Moyen » (3/5) — l'évaluateur doit se prononcer
     CRITERIA_DATA.forEach(c => {
-        appState.criteriaScores[c.id] = 5;
+        appState.criteriaScores[c.id] = 3;
     });
 
-    // Load initial scenario selection (3 random out of 100)
-    selectRandomScenarios(3);
+    // 3 mises en situation tirées au sort dans la banque
+    selectRandomScenarios(BAREME.NB_SCENARIOS);
 
     // Load History from LocalStorage if available
     loadHistoryFromStorage();
@@ -156,8 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         container.innerHTML = CRITERIA_DATA.map(c => {
-            const currentVal = appState.criteriaScores[c.id] ?? 5;
+            const currentVal = appState.criteriaScores[c.id] ?? 3;
             const subItemsHtml = c.subItems.map(item => `<li><i class="fa-solid fa-check-double"></i> ${item}</li>`).join('');
+            const buttonsHtml = RATING_LEVELS.map(lvl => `
+                <button type="button" class="rate-btn ${lvl.cls} ${currentVal === lvl.pts ? 'selected' : ''}"
+                        data-pts="${lvl.pts}" data-id="${c.id}" title="${lvl.desc}">
+                    <span>${lvl.label}</span>
+                    <span class="pts">${lvl.pts} / 5</span>
+                </button>
+            `).join('');
 
             return `
                 <div class="criterion-card" data-id="${c.id}">
@@ -170,42 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
                         <div class="criterion-rating-buttons">
-                            <button type="button" class="rate-btn ${currentVal === 10 ? 'selected' : ''}" data-pts="10" data-id="${c.id}">
-                                <span>Parfait</span>
-                                <span class="pts">+10 / 10</span>
-                            </button>
-                            <button type="button" class="rate-btn ${currentVal === 5 ? 'selected' : ''}" data-pts="5" data-id="${c.id}">
-                                <span>Bon</span>
-                                <span class="pts">+5 / 10</span>
-                            </button>
-                            <button type="button" class="rate-btn ${currentVal === 0 ? 'selected' : ''}" data-pts="0" data-id="${c.id}">
-                                <span>Moyen</span>
-                                <span class="pts">0 / 10</span>
-                            </button>
-                            <button type="button" class="rate-btn ${currentVal === -5 ? 'selected' : ''}" data-pts="-5" data-id="${c.id}">
-                                <span>Critique</span>
-                                <span class="pts">-5 / 10</span>
-                            </button>
-                            <button type="button" class="rate-btn ${currentVal === -10 ? 'selected' : ''}" data-pts="-10" data-id="${c.id}">
-                                <span>Critique Max</span>
-                                <span class="pts" style="color: #ff6b6b; font-weight: bold;">-10 / 10</span>
-                            </button>
-
-                            <!-- Case à remplir directe pour le nombre de points sur-mesure -->
-                            <div class="criterion-input-box-wrapper" title="Saisissez un nombre de points direct (-10 à +10)">
-                                <label style="font-size: 10px; color: var(--sand-primary); text-transform: uppercase;">Case à remplir :</label>
-                                <div class="criterion-input-group">
-                                    <input type="number" 
-                                           class="criterion-direct-input" 
-                                           data-id="${c.id}" 
-                                           min="-10" 
-                                           max="10" 
-                                           step="1" 
-                                           value="${currentVal}" 
-                                           placeholder="pts">
-                                    <span style="font-size: 11px; font-weight: bold; color: var(--sand-dim);">/ 10</span>
-                                </div>
-                            </div>
+                            ${buttonsHtml}
                         </div>
                     </div>
                     <ul class="thresholds-reference-table" style="margin-top: 6px; opacity: 0.85;">
@@ -217,32 +113,11 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Attach click handlers to preset buttons
         container.querySelectorAll('.rate-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = parseInt(btn.getAttribute('data-id'));
-                const pts = parseInt(btn.getAttribute('data-pts'));
-
-                appState.criteriaScores[id] = pts;
-
-                // Sync the corresponding input box
-                const inputEl = container.querySelector(`.criterion-direct-input[data-id="${id}"]`);
-                if (inputEl) inputEl.value = pts;
-
+                appState.criteriaScores[id] = parseInt(btn.getAttribute('data-pts'));
                 renderCriteriaSection();
-                updateCalculations();
-            });
-        });
-
-        // Attach input change handlers to direct inline input boxes ("cases à remplir")
-        container.querySelectorAll('.criterion-direct-input').forEach(input => {
-            input.addEventListener('input', () => {
-                const id = parseInt(input.getAttribute('data-id'));
-                let val = parseFloat(input.value);
-                if (isNaN(val)) val = 0;
-                val = Math.max(-10, Math.min(10, val));
-
-                appState.criteriaScores[id] = val;
                 updateCalculations();
             });
         });
@@ -263,18 +138,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         countBadge.textContent = `${appState.activeScenarios.length} scénario(s) tiré(s) (Banque de ${SCENARIOS_BANK.length} scénarios)`;
 
-        container.innerHTML = scenariosToDisplay.map(sc => `
+        container.innerHTML = scenariosToDisplay.map(sc => {
+            const val = appState.scenarioScores[sc.id] ?? 0;
+            const notesHtml = [0, 1, 2, 3].map(n => `
+                <button type="button" class="scenario-rate-btn ${val === n ? 'selected' : ''}"
+                        data-sc="${sc.id}" data-pts="${n}">${n}</button>
+            `).join('');
+            return `
             <div class="scenario-card">
                 <div>
                     <span class="scenario-category">${sc.category}</span>
                     <h3 class="scenario-title" style="margin-top: 6px;">${sc.title}</h3>
                     <p class="scenario-desc" style="margin-top: 8px;">${sc.desc}</p>
+                    ${sc.attendu ? `<div class="scenario-expected"><strong><i class="fa-solid fa-clipboard-check"></i> Réponse attendue :</strong> ${sc.attendu}</div>` : ''}
                 </div>
                 <div class="scenario-eval-tips">
                     <strong><i class="fa-solid fa-microscope"></i> Diagnostic évaluateur :</strong> ${sc.evalTips}
                 </div>
+                <div class="scenario-scoring">
+                    <span class="scenario-scoring-label"><i class="fa-solid fa-star-half-stroke"></i> Note de la mise en situation</span>
+                    <div class="scenario-rate-group">${notesHtml}<span class="scenario-rate-max">/ 3</span></div>
+                </div>
             </div>
-        `).join('');
+        `;
+        }).join('');
+
+        container.querySelectorAll('.scenario-rate-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                appState.scenarioScores[btn.getAttribute('data-sc')] = parseInt(btn.getAttribute('data-pts'));
+                renderScenariosSection();
+                updateCalculations();
+            });
+        });
     }
 
     function renderDiagnosticsSection() {
@@ -388,15 +283,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
 
     function calculateScores() {
-        let rawCriteriaSum = 0;
-        Object.values(appState.criteriaScores).forEach(val => {
-            rawCriteriaSum += val;
+        // 8 critères × 5 points = 40 points maximum
+        let criteriaTotal = 0;
+        Object.values(appState.criteriaScores).forEach(val => { criteriaTotal += val; });
+        criteriaTotal = Math.max(0, Math.min(BAREME.MAX_CRITERIA, criteriaTotal));
+
+        // 3 mises en situation × 3 points = 9 points maximum
+        let scenariosTotal = 0;
+        appState.activeScenarios.forEach(sc => {
+            scenariosTotal += appState.scenarioScores[sc.id] ?? 0;
         });
+        scenariosTotal = Math.max(0, Math.min(BAREME.MAX_SCENARIOS, scenariosTotal));
 
-        // Convert criteria sum (-80 to +80) into a base score on 40
-        const criteriaTotal = Math.max(0, Math.min(40, Math.round(20 + (rawCriteriaSum * 0.25))));
+        // Première impression clinique : -1 / 0 / +1
+        const impressionTotal = Math.max(-1, Math.min(1, appState.firstImpression ?? 0));
 
-        // Calculate Malus Standard
+        // Malus diagnostiques (cumulables) : -2 / -4 / -6
         let malusTotal = 0;
         const allMalusItems = [...MALUS_DATA.light, ...MALUS_DATA.moderate, ...MALUS_DATA.severe];
         appState.selectedMalus.forEach(id => {
@@ -404,72 +306,32 @@ document.addEventListener('DOMContentLoaded', () => {
             if (found) malusTotal += found.pts;
         });
 
-        // Calculate Bonus Standard (capped at +4)
+        // Bonus cliniques : +1 chacun, plafonnés à +2
         let rawBonus = 0;
         appState.selectedBonus.forEach(id => {
             const found = BONUS_DATA.find(b => b.id === id);
             if (found) rawBonus += found.pts;
         });
-        const bonusTotal = Math.min(4, rawBonus);
+        const bonusTotal = Math.min(BAREME.MAX_BONUS, rawBonus);
 
-        // Calculate Custom Adjustments ("Autre")
+        // Ajustements « Autre » (hors référentiel, à justifier)
         let customAdjustmentsTotal = 0;
         appState.customAdjustments.forEach(adj => {
-            if (adj.type === 'add') {
-                customAdjustmentsTotal += adj.pts;
-            } else {
-                customAdjustmentsTotal -= adj.pts;
-            }
+            customAdjustmentsTotal += (adj.type === 'add') ? adj.pts : -adj.pts;
         });
 
-        // Final score (clamped between 0 and 50)
-        const rawFinal = criteriaTotal + bonusTotal - malusTotal + customAdjustmentsTotal;
-        const finalScore = Math.max(0, Math.min(50, rawFinal));
+        // 6.3 — (Critères) + (Mises en situation) + (Impression) + (Bonus) - (Malus)
+        const rawFinal = criteriaTotal + scenariosTotal + impressionTotal
+                       + bonusTotal - malusTotal + customAdjustmentsTotal;
+        const finalScore = Math.max(0, Math.min(BAREME.MAX_TOTAL, rawFinal));
 
-        // Determine Decision
-        let decision = {
-            title: '',
-            statusClass: '',
-            description: '',
-            reevalDate: '3 mois',
-            generalDiagnosis: 'Équilibre clinique conservé'
-        };
-
-        if (finalScore >= 45) {
-            decision.title = "MAINTIEN DU GRADE";
-            decision.statusClass = "status-maintien";
-            decision.description = "Le shinobi est pleinement apte au combat. Aucune restriction de mission. Maintien strict du grade actuel.";
-            decision.generalDiagnosis = "Aptitude optimale au combat — Aucune séquelle clinique";
-            decision.reevalDate = "12 mois";
-        } else if (finalScore >= 35) {
-            decision.title = "MAINTIEN AVEC SUIVI";
-            decision.statusClass = "status-suivi";
-            decision.description = "Le shinobi est apte au service avec un suivi psychologique obligatoire. Rapport à fournir régulièrement par l'évaluateur.";
-            decision.generalDiagnosis = "Aptitude opérationnelle sous suivi psychologique préventif";
-            decision.reevalDate = "3 à 6 mois";
-        } else if (finalScore >= 25) {
-            decision.title = "RESTRICTION TEMPORAIRE";
-            decision.statusClass = "status-restriction";
-            decision.description = "Restrictions sur les missions à haut risque pendant 7 à 14 jours. Réévaluation obligatoire à la fin de la période.";
-            decision.generalDiagnosis = "Vulnérabilité modérée — Mises au repos stratégique recommandées";
-            decision.reevalDate = "14 jours";
-        } else if (finalScore >= 15) {
-            decision.title = "SUSPENSION TEMPORAIRE";
-            decision.statusClass = "status-suspension";
-            decision.description = "Suspension temporaire de l'ensemble des missions opérationnelles. Soins psychologiques intensifs prescrits.";
-            decision.generalDiagnosis = "Altération marquée des facultés d'adaptation au combat";
-            decision.reevalDate = "30 jours";
-        } else {
-            decision.title = "RÉTROGRADATION TEMPORAIRE";
-            decision.statusClass = "status-retrogradation";
-            decision.description = "Rétrogradation temporaire au grade inférieur avec réaffectation administrative. Réévaluation clinique complète avant toute progression.";
-            decision.generalDiagnosis = "Inaptitude critique constatée — Risque majeur pour l'unité";
-            decision.reevalDate = "60 jours";
-        }
+        // Décision déterminée via le référentiel partagé (data.js)
+        const decision = getDecisionForScore(finalScore);
 
         return {
-            rawCriteriaSum,
             criteriaTotal,
+            scenariosTotal,
+            impressionTotal,
             malusTotal,
             bonusTotal,
             customAdjustmentsTotal,
@@ -492,11 +354,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update Tab 5 score circle & breakdown
         document.getElementById('final-score-val').textContent = scores.finalScore;
-        document.getElementById('breakdown-crit-val').textContent = `${scores.criteriaTotal} pts`;
+        document.getElementById('breakdown-crit-val').textContent = `${scores.criteriaTotal} / ${BAREME.MAX_CRITERIA} pts`;
+        const scEl = document.getElementById('breakdown-scenarios-val');
+        if (scEl) scEl.textContent = `+${scores.scenariosTotal} / ${BAREME.MAX_SCENARIOS} pts`;
+        const impEl = document.getElementById('breakdown-impression-val');
+        if (impEl) impEl.textContent = `${scores.impressionTotal >= 0 ? '+' : ''}${scores.impressionTotal} pt`;
         document.getElementById('breakdown-bonus-val').textContent = `+${scores.bonusTotal} pts`;
         document.getElementById('breakdown-malus-val').textContent = `-${scores.malusTotal} pts`;
         document.getElementById('breakdown-custom-val').textContent = `${scores.customAdjustmentsTotal >= 0 ? '+' : ''}${scores.customAdjustmentsTotal} pts`;
-        document.getElementById('breakdown-total-val').textContent = `${scores.finalScore} / 50`;
+        document.getElementById('breakdown-total-val').textContent = `${scores.finalScore} / ${BAREME.MAX_TOTAL}`;
 
         // Update decision card
         const badge = document.getElementById('decision-badge');
@@ -509,6 +375,425 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render printable report
         renderPrintableReport();
     }
+
+    // ==========================================
+    // HISTORIQUE PATIENTS (base partagée Supabase)
+    // ==========================================
+    let sb = null;
+    try {
+        if (typeof SUPABASE_URL !== 'undefined' && typeof window.supabase !== 'undefined') {
+            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
+    } catch (e) { console.error('Client Supabase indisponible :', e); sb = null; }
+
+    let dossiersState = { rows: [], loading: false, seq: 0 };
+    let dossiersSearchTimer = null;
+
+    function escapeHtml(t) {
+        const d = document.createElement('div');
+        d.textContent = t == null ? '' : t;
+        return d.innerHTML;
+    }
+
+    function setDossiersStatus(html, isError) {
+        const el = document.getElementById('dossiers-status');
+        if (!el) return;
+        el.innerHTML = html;
+        el.classList.toggle('is-error', !!isError);
+    }
+
+    // Enregistre l'évaluation courante dans la base partagée
+    async function saveEvaluationToDatabase(scores) {
+        if (!sb) throw new Error('Configuration Supabase absente.');
+        const p = appState.patient;
+        const allMalus = [...MALUS_DATA.light, ...MALUS_DATA.moderate, ...MALUS_DATA.severe];
+
+        const reponses = {
+            criteres: CRITERIA_DATA.map(c => ({
+                id: c.id,
+                titre: c.title,
+                note: appState.criteriaScores[c.id] ?? 0,
+                appreciation: (RATING_LEVELS.find(l => l.pts === (appState.criteriaScores[c.id] ?? 0)) || {}).label || ''
+            })),
+            mises_en_situation: appState.activeScenarios.map(sc => ({
+                id: sc.id,
+                categorie: sc.category,
+                titre: sc.title,
+                note: appState.scenarioScores[sc.id] ?? 0
+            })),
+            premiere_impression: appState.firstImpression ?? 0,
+            observations_entretien: appState.qualitativeObs,
+            diagnostics: appState.selectedMalus
+                .map(id => allMalus.find(m => m.id === id))
+                .filter(Boolean)
+                .map(m => ({ label: m.label, malus: m.pts })),
+            bonus: appState.selectedBonus
+                .map(id => BONUS_DATA.find(b => b.id === id))
+                .filter(Boolean)
+                .map(b => ({ label: b.label, bonus: b.pts })),
+            ajustements_autre: appState.customAdjustments,
+            justification_malus: appState.malusJustification,
+            justification_bonus: appState.bonusJustification
+        };
+
+        const row = {
+            patient_nom: p.name,
+            patient_grade: p.grade,
+            patient_unite: p.unit || null,
+            patient_age: parseInt(p.age) || null,
+            patient_sexe: p.gender || null,
+            evaluateur: p.evaluator || null,
+            date_evaluation: p.evalDate || null,
+            score_criteres: scores.criteriaTotal,
+            score_situations: scores.scenariosTotal,
+            score_impression: scores.impressionTotal,
+            total_bonus: scores.bonusTotal,
+            total_malus: scores.malusTotal,
+            total_ajustements: scores.customAdjustmentsTotal,
+            score_final: scores.finalScore,
+            decision: scores.decision.title,
+            reponses: reponses
+        };
+
+        const res = await sb.from('psy_evaluations').insert([row]);
+        if (res.error) throw new Error(res.error.message);
+    }
+
+    async function loadDossiers() {
+        const listEl = document.getElementById('dossiers-list');
+        if (!listEl) return;
+        if (!sb) {
+            setDossiersStatus('Configuration Supabase absente — impossible de charger les dossiers.', true);
+            listEl.innerHTML = '';
+            return;
+        }
+        const seq = ++dossiersState.seq;
+        dossiersState.loading = true;
+        setDossiersStatus('Chargement des dossiers...');
+        try {
+            const q = document.getElementById('dossiers-search').value.trim();
+            let query = sb.from('psy_evaluations')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(300);
+            if (q.length >= 2) query = query.ilike('patient_nom', '%' + q + '%');
+            const res = await query;
+            if (seq !== dossiersState.seq) return;
+            if (res.error) throw new Error(res.error.message);
+            dossiersState.rows = res.data || [];
+            renderDossiers();
+        } catch (e) {
+            if (seq !== dossiersState.seq) return;
+            console.error(e);
+            setDossiersStatus('Erreur de chargement : ' + escapeHtml(e.message), true);
+            listEl.innerHTML = '';
+        } finally {
+            if (seq === dossiersState.seq) dossiersState.loading = false;
+        }
+    }
+
+    function renderDossiers() {
+        const listEl = document.getElementById('dossiers-list');
+        const decisionFilter = document.getElementById('dossiers-filter-decision').value;
+        let rows = dossiersState.rows;
+        if (decisionFilter) rows = rows.filter(r => r.decision === decisionFilter);
+
+        // Un patient peut avoir plusieurs évaluations : on compte les patients distincts
+        const patientsDistincts = new Set(dossiersState.rows.map(r => (r.patient_nom || '').toLowerCase())).size;
+        setDossiersStatus('<strong>' + dossiersState.rows.length + '</strong> évaluation(s) enregistrée(s) · '
+            + '<strong>' + patientsDistincts + '</strong> patient(s) suivi(s)');
+
+        if (rows.length === 0) {
+            listEl.innerHTML = '<div class="dossiers-empty">Aucun dossier ne correspond aux filtres.</div>';
+            return;
+        }
+
+        listEl.innerHTML = rows.map(r => {
+            const date = r.date_evaluation || (r.created_at || '').slice(0, 10);
+            const cls = decisionClass(r.decision);
+            return `
+                <div class="dossier-card">
+                    <div class="dossier-head">
+                        <span class="dossier-name">${escapeHtml(r.patient_nom)}</span>
+                        <span class="dossier-score ${cls}">${r.score_final} / ${BAREME.MAX_TOTAL}</span>
+                    </div>
+                    <div class="dossier-decision ${cls}">${escapeHtml(r.decision || '—')}</div>
+                    <div class="dossier-meta">${escapeHtml(r.patient_grade || '—')}${r.patient_unite ? ' · ' + escapeHtml(r.patient_unite) : ''}</div>
+                    <div class="dossier-meta">Évalué le ${escapeHtml(date)}${r.evaluateur ? ' par ' + escapeHtml(r.evaluateur) : ''}</div>
+                    <div class="dossier-actions">
+                        <button type="button" class="btn btn-secondary dossier-detail-btn" data-id="${r.id}">
+                            <i class="fa-solid fa-eye"></i> Voir les réponses
+                        </button>
+                    </div>
+                </div>`;
+        }).join('');
+
+        listEl.querySelectorAll('.dossier-detail-btn').forEach(btn => {
+            btn.addEventListener('click', () => openDossierDetail(parseInt(btn.dataset.id)));
+        });
+    }
+
+    // Retrouve la classe CSS d'une décision à partir de son titre stocké en base
+    // (fonctionne aussi pour les anciens dossiers enregistrés avec les libellés
+    // précédents, via une table de correspondance de secours).
+    const LEGACY_DECISION_CLASS = {
+        'MAINTIEN AVEC SUIVI': 'status-recommandations',
+        'RESTRICTION TEMPORAIRE': 'status-restrictions',
+        'SUSPENSION TEMPORAIRE': 'status-suspension',
+        'RÉTROGRADATION TEMPORAIRE': 'status-retrogradation'
+    };
+    function decisionClass(decisionTitle) {
+        const found = DECISIONS.find(d => d.title === decisionTitle);
+        if (found) return found.statusClass.replace('status-', 'dec-');
+        const legacy = LEGACY_DECISION_CLASS[decisionTitle];
+        return legacy ? legacy.replace('status-', 'dec-') : '';
+    }
+
+    function openDossierDetail(id) {
+        const r = dossiersState.rows.find(x => x.id === id);
+        if (!r) return;
+        const rep = r.reponses || {};
+        const body = document.getElementById('dossier-modal-body');
+
+        const criteres = (rep.criteres || []).map(c =>
+            `<li><span>${escapeHtml(c.titre)}</span><strong>${c.note} / 5 — ${escapeHtml(c.appreciation)}</strong></li>`).join('');
+        const situations = (rep.mises_en_situation || []).map(s =>
+            `<li><span>${escapeHtml(s.titre)} <em>(${escapeHtml(s.categorie)})</em></span><strong>${s.note} / 3</strong></li>`).join('');
+        const diagnostics = (rep.diagnostics || []).map(d =>
+            `<span class="detail-chip neg">${escapeHtml(d.label)} (-${d.malus})</span>`).join('') || '<em>Aucun</em>';
+        const bonus = (rep.bonus || []).map(b =>
+            `<span class="detail-chip pos">${escapeHtml(b.label)} (+${b.bonus})</span>`).join('') || '<em>Aucun</em>';
+
+        document.getElementById('dossier-modal-title').textContent =
+            r.patient_nom + ' — ' + r.score_final + ' / ' + BAREME.MAX_TOTAL + ' (' + (r.decision || '—') + ')';
+
+        body.innerHTML = `
+            <div class="detail-grid">
+                <div><span>Grade</span><strong>${escapeHtml(r.patient_grade || '—')}</strong></div>
+                <div><span>Unité</span><strong>${escapeHtml(r.patient_unite || '—')}</strong></div>
+                <div><span>Âge</span><strong>${r.patient_age ?? '—'}</strong></div>
+                <div><span>Sexe</span><strong>${escapeHtml(r.patient_sexe || '—')}</strong></div>
+                <div><span>Évaluateur</span><strong>${escapeHtml(r.evaluateur || '—')}</strong></div>
+                <div><span>Date</span><strong>${escapeHtml(r.date_evaluation || (r.created_at || '').slice(0, 10))}</strong></div>
+            </div>
+
+            <h4 class="detail-title">Critères cliniques — ${r.score_criteres} / ${BAREME.MAX_CRITERIA}</h4>
+            <ul class="detail-list">${criteres || '<li><em>Aucun critère enregistré</em></li>'}</ul>
+
+            <h4 class="detail-title">Mises en situation — ${r.score_situations} / ${BAREME.MAX_SCENARIOS}</h4>
+            <ul class="detail-list">${situations || '<li><em>Aucune mise en situation enregistrée</em></li>'}</ul>
+
+            <h4 class="detail-title">Première impression</h4>
+            <p class="detail-text">${rep.premiere_impression > 0 ? '+1 (favorable)' : rep.premiere_impression < 0 ? '-1 (défavorable)' : '0 (neutre)'}</p>
+
+            <h4 class="detail-title">Diagnostics retenus — total ${r.total_malus} pts de malus</h4>
+            <div class="detail-chips">${diagnostics}</div>
+            ${rep.justification_malus ? `<p class="detail-text"><em>${escapeHtml(rep.justification_malus)}</em></p>` : ''}
+
+            <h4 class="detail-title">Bonus cliniques — +${r.total_bonus} pts</h4>
+            <div class="detail-chips">${bonus}</div>
+            ${rep.justification_bonus ? `<p class="detail-text"><em>${escapeHtml(rep.justification_bonus)}</em></p>` : ''}
+
+            <h4 class="detail-title">Calcul final</h4>
+            <p class="detail-text">
+                ${r.score_criteres} (critères) + ${r.score_situations} (situations)
+                ${r.score_impression >= 0 ? '+' : ''}${r.score_impression} (impression)
+                + ${r.total_bonus} (bonus) − ${r.total_malus} (malus)
+                ${r.total_ajustements ? (r.total_ajustements >= 0 ? '+' : '') + r.total_ajustements + ' (ajustements)' : ''}
+                = <strong>${r.score_final} / ${BAREME.MAX_TOTAL}</strong>
+            </p>`;
+
+        document.getElementById('dossier-modal').classList.add('open');
+    }
+
+    function closeDossierModal() {
+        document.getElementById('dossier-modal').classList.remove('open');
+    }
+
+    document.getElementById('dossiers-search').addEventListener('input', () => {
+        clearTimeout(dossiersSearchTimer);
+        dossiersSearchTimer = setTimeout(loadDossiers, 300);
+    });
+    document.getElementById('dossiers-filter-decision').addEventListener('change', renderDossiers);
+    document.getElementById('dossiers-refresh').addEventListener('click', loadDossiers);
+    document.getElementById('dossier-modal-close').addEventListener('click', closeDossierModal);
+    document.getElementById('dossier-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeDossierModal();
+    });
+
+    // ==========================================
+    // AUTO-TESTS (résultats des tris auto-administrés par les patients)
+    // ==========================================
+    let autotestsState = { rows: [], loading: false, seq: 0 };
+    let autotestsSearchTimer = null;
+
+    function setAutotestsStatus(html, isError) {
+        const el = document.getElementById('autotests-status');
+        if (!el) return;
+        el.innerHTML = html;
+        el.classList.toggle('is-error', !!isError);
+    }
+
+    async function loadAutotests() {
+        const listEl = document.getElementById('autotests-list');
+        if (!listEl) return;
+        if (!sb) {
+            setAutotestsStatus('Configuration Supabase absente — impossible de charger les auto-tests.', true);
+            listEl.innerHTML = '';
+            return;
+        }
+        const seq = ++autotestsState.seq;
+        setAutotestsStatus('Chargement des auto-tests...');
+        try {
+            const q = document.getElementById('autotests-search').value.trim();
+            let query = sb.from('psy_autotests')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(300);
+            if (q.length >= 2) query = query.ilike('patient_nom', '%' + q + '%');
+            const res = await query;
+            if (seq !== autotestsState.seq) return;
+            if (res.error) throw new Error(res.error.message);
+            autotestsState.rows = res.data || [];
+            renderAutotests();
+        } catch (e) {
+            if (seq !== autotestsState.seq) return;
+            console.error(e);
+            setAutotestsStatus('Erreur de chargement : ' + escapeHtml(e.message), true);
+            listEl.innerHTML = '';
+        }
+    }
+
+    function renderAutotests() {
+        const listEl = document.getElementById('autotests-list');
+        const decisionFilter = document.getElementById('autotests-filter-decision').value;
+        const traiteFilter = document.getElementById('autotests-filter-traite').value;
+        let rows = autotestsState.rows;
+        if (decisionFilter) rows = rows.filter(r => r.decision === decisionFilter);
+        if (traiteFilter === 'oui') rows = rows.filter(r => r.traite);
+        if (traiteFilter === 'non') rows = rows.filter(r => !r.traite);
+
+        const nonTraites = autotestsState.rows.filter(r => !r.traite && r.decision !== 'MAINTIEN DU GRADE').length;
+        setAutotestsStatus('<strong>' + autotestsState.rows.length + '</strong> auto-test(s) reçu(s) · '
+            + '<strong>' + nonTraites + '</strong> cas à surveiller non traités');
+
+        if (rows.length === 0) {
+            listEl.innerHTML = '<div class="dossiers-empty">Aucun auto-test ne correspond aux filtres.</div>';
+            return;
+        }
+
+        listEl.innerHTML = rows.map(r => {
+            const date = (r.created_at || '').slice(0, 10);
+            const cls = decisionClass(r.decision);
+            const maxAuto = BAREME.MAX_CRITERIA + BAREME.MAX_SCENARIOS;
+            return `
+                <div class="dossier-card">
+                    <div class="dossier-head">
+                        <span class="dossier-name">${escapeHtml(r.patient_nom)}</span>
+                        <span class="dossier-score ${cls}">${r.score_final} / ${maxAuto}</span>
+                    </div>
+                    <div class="dossier-decision ${cls}">${escapeHtml(r.decision || '—')}</div>
+                    <div class="dossier-meta">${escapeHtml(r.patient_grade || '—')}${r.patient_age ? ' · ' + r.patient_age + ' ans' : ''}${r.patient_sexe ? ' · ' + escapeHtml(r.patient_sexe) : ''}</div>
+                    <div class="dossier-meta">Auto-test du ${escapeHtml(date)} — ${r.traite ? '<strong>Traité</strong>' + (r.traite_par ? ' par ' + escapeHtml(r.traite_par) : '') : '<strong>Non traité</strong>'}</div>
+                    <div class="dossier-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-secondary autotest-detail-btn" data-id="${r.id}">
+                            <i class="fa-solid fa-eye"></i> Voir les réponses
+                        </button>
+                        ${!r.traite ? `<button type="button" class="btn btn-primary autotest-traite-btn" data-id="${r.id}">
+                            <i class="fa-solid fa-check"></i> Marquer comme traité
+                        </button>` : ''}
+                    </div>
+                </div>`;
+        }).join('');
+
+        listEl.querySelectorAll('.autotest-detail-btn').forEach(btn => {
+            btn.addEventListener('click', () => openAutotestDetail(parseInt(btn.dataset.id)));
+        });
+        listEl.querySelectorAll('.autotest-traite-btn').forEach(btn => {
+            btn.addEventListener('click', () => markAutotestTraite(parseInt(btn.dataset.id)));
+        });
+    }
+
+    function openAutotestDetail(id) {
+        const r = autotestsState.rows.find(x => x.id === id);
+        if (!r) return;
+        const rep = r.reponses || {};
+        const body = document.getElementById('autotest-modal-body');
+        const maxAuto = BAREME.MAX_CRITERIA + BAREME.MAX_SCENARIOS;
+
+        const criteres = (rep.criteres || []).map(c =>
+            `<li><span>${escapeHtml(c.titre)}</span><strong>${c.note} / 5</strong></li>`).join('');
+        const situations = (rep.mises_en_situation || []).map(s =>
+            `<li><span>${escapeHtml(s.titre)} <em>(${escapeHtml(s.categorie)})</em></span><strong>${s.note} / 3</strong></li>`).join('');
+
+        document.getElementById('autotest-modal-title').textContent =
+            r.patient_nom + ' — ' + r.score_final + ' / ' + maxAuto + ' (' + (r.decision || '—') + ')';
+
+        body.innerHTML = `
+            <div class="detail-grid">
+                <div><span>Grade</span><strong>${escapeHtml(r.patient_grade || '—')}</strong></div>
+                <div><span>Âge</span><strong>${r.patient_age ?? '—'}</strong></div>
+                <div><span>Sexe</span><strong>${escapeHtml(r.patient_sexe || '—')}</strong></div>
+                <div><span>Date</span><strong>${escapeHtml((r.created_at || '').slice(0, 10))}</strong></div>
+                <div><span>Statut</span><strong>${r.traite ? 'Traité' + (r.traite_par ? ' par ' + escapeHtml(r.traite_par) : '') : 'Non traité'}</strong></div>
+            </div>
+
+            <h4 class="detail-title">Critères — ${r.score_criteres} / ${BAREME.MAX_CRITERIA}</h4>
+            <ul class="detail-list">${criteres || '<li><em>Aucun critère enregistré</em></li>'}</ul>
+
+            <h4 class="detail-title">Mises en situation — ${r.score_situations} / ${BAREME.MAX_SCENARIOS}</h4>
+            <ul class="detail-list">${situations || '<li><em>Aucune mise en situation enregistrée</em></li>'}</ul>
+
+            <h4 class="detail-title">Calcul final</h4>
+            <p class="detail-text">
+                ${r.score_criteres} (critères) + ${r.score_situations} (situations)
+                = <strong>${r.score_final} / ${maxAuto}</strong>
+                — auto-test sans impression clinique ni bonus/malus (jugement non disponible en auto-évaluation).
+            </p>`;
+
+        document.getElementById('autotest-modal').classList.add('open');
+    }
+
+    function closeAutotestModal() {
+        document.getElementById('autotest-modal').classList.remove('open');
+    }
+
+    async function markAutotestTraite(id) {
+        if (!sb) return;
+        const evaluateur = document.getElementById('evaluator-name') ? document.getElementById('evaluator-name').value : '';
+        try {
+            const res = await sb.from('psy_autotests')
+                .update({ traite: true, traite_par: evaluateur || null, traite_le: new Date().toISOString() })
+                .eq('id', id);
+            if (res.error) throw new Error(res.error.message);
+            await loadAutotests();
+        } catch (e) {
+            console.error(e);
+            alert('Impossible de marquer ce dossier comme traité : ' + e.message);
+        }
+    }
+
+    document.getElementById('autotests-search').addEventListener('input', () => {
+        clearTimeout(autotestsSearchTimer);
+        autotestsSearchTimer = setTimeout(loadAutotests, 300);
+    });
+    document.getElementById('autotests-filter-decision').addEventListener('change', renderAutotests);
+    document.getElementById('autotests-filter-traite').addEventListener('change', renderAutotests);
+    document.getElementById('autotests-refresh').addEventListener('click', loadAutotests);
+    document.getElementById('autotest-modal-close').addEventListener('click', closeAutotestModal);
+    document.getElementById('autotest-modal').addEventListener('click', function (e) {
+        if (e.target === this) closeAutotestModal();
+    });
+
+    // Première impression clinique (-1 / 0 / +1)
+    document.querySelectorAll('.impression-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            appState.firstImpression = parseInt(btn.getAttribute('data-imp'));
+            document.querySelectorAll('.impression-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            updateCalculations();
+        });
+    });
 
     // Add Custom Adjustment Button Event ("Autre")
     document.getElementById('btn-add-custom-adjustment').addEventListener('click', () => {
@@ -642,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div><strong>Grade :</strong> ${p.grade} (Âge: ${p.age}, Sexe: ${p.gender})</div>
                     <div><strong>Date d'Évaluation :</strong> ${p.evalDate}</div>
                     <div><strong>Psychologue :</strong> ${p.evaluator}</div>
-                    <div><strong>Score Global :</strong> ${scores.finalScore} / 50 pts</div>
+                    <div><strong>Score Global :</strong> ${scores.finalScore} / ${BAREME.MAX_TOTAL} pts</div>
                 </div>
 
                 <div class="doc-section">
@@ -682,7 +967,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="doc-section">
                     <div class="doc-section-title">4. DÉCISION FINALE & RECOMMANDATIONS CLINIQUES</div>
                     <div style="background: #e9decb; border-left: 4px solid #3d0c11; padding: 12px 16px; margin-top: 6px;">
-                        <h4 style="font-size: 16px; color: #3d0c11;">${scores.decision.title} (Score: ${scores.finalScore} / 50)</h4>
+                        <h4 style="font-size: 16px; color: #3d0c11;">${scores.decision.title} (Score: ${scores.finalScore} / ${BAREME.MAX_TOTAL})</h4>
                         <p style="font-size: 13px; margin-top: 4px;">${scores.decision.description}</p>
                     </div>
                 </div>
@@ -699,10 +984,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // 6. EVENT HANDLERS & HELPERS
     // ==========================================
 
-    function selectRandomScenarios(count = 3) {
+    function selectRandomScenarios(count = BAREME.NB_SCENARIOS) {
         const shuffled = [...SCENARIOS_BANK].sort(() => 0.5 - Math.random());
         appState.activeScenarios = shuffled.slice(0, count);
+        // Un nouveau tirage repart de zéro : les notes précédentes ne valent plus
+        appState.scenarioScores = {};
+        appState.activeScenarios.forEach(sc => { appState.scenarioScores[sc.id] = 0; });
         renderScenariosSection();
+        updateCalculations();
     }
 
     // Navigation Tabs Switcher
@@ -715,6 +1004,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.add('active');
             const targetPane = document.getElementById(tabTarget);
             if (targetPane) targetPane.classList.add('active');
+
+            // L'annuaire n'est chargé qu'à la première ouverture de son onglet
+            if (tabTarget === 'tab-patients') loadDossiers();
+            if (tabTarget === 'tab-autotests') loadAutotests();
         });
     });
 
@@ -794,14 +1087,16 @@ document.addEventListener('DOMContentLoaded', () => {
         window.print();
     });
 
-    // Save Patient to LocalStorage History
-    document.getElementById('btn-save-patient').addEventListener('click', () => {
+    // Enregistrement du dossier : base partagée + copie locale de secours
+    document.getElementById('btn-save-patient').addEventListener('click', async () => {
         if (!appState.patient.name) {
             alert("Veuillez renseigner le nom du shinobi avant d'enregistrer le dossier.");
             return;
         }
 
+        const btn = document.getElementById('btn-save-patient');
         const scores = calculateScores();
+
         const evalRecord = {
             id: Date.now(),
             date: appState.patient.evalDate,
@@ -813,11 +1108,21 @@ document.addEventListener('DOMContentLoaded', () => {
             evaluator: appState.patient.evaluator,
             fullState: JSON.parse(JSON.stringify(appState))
         };
-
         appState.evaluationsHistory.unshift(evalRecord);
         saveHistoryToStorage();
         renderHistoryTable();
-        alert(`Dossier clinique de ${appState.patient.name} enregistré avec succès !`);
+
+        btn.disabled = true;
+        try {
+            await saveEvaluationToDatabase(scores);
+            alert(`Dossier clinique de ${appState.patient.name} enregistré (${scores.finalScore} / ${BAREME.MAX_TOTAL} — ${scores.decision.title}).`);
+            loadDossiers();
+        } catch (e) {
+            console.error(e);
+            alert("Le dossier est enregistré localement, mais l'envoi vers la base partagée a échoué :\n" + e.message);
+        } finally {
+            btn.disabled = false;
+        }
     });
 
     // Storage Helpers
@@ -852,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><strong>${item.name}</strong></td>
                 <td>${item.grade}</td>
                 <td>${item.unit || '-'}</td>
-                <td><strong style="color: var(--sand-primary);">${item.score} / 50</strong></td>
+                <td><strong style="color: var(--sand-primary);">${item.score} / ${BAREME.MAX_TOTAL}</strong></td>
                 <td><span class="count-badge">${item.decision}</span></td>
                 <td>${item.evaluator}</td>
                 <td>

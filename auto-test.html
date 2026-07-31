@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIMEI - SUNA | Auto-test Psychologique</title>
+    <meta name="description" content="Auto-test de tri psychologique — à remplir seul, sans psychologue, avant une éventuelle évaluation clinique complète.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Top Institutional Header -->
+        <header class="main-header" id="header">
+            <div class="header-emblem left">
+                <svg viewBox="0 0 100 100" class="emblem-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
+                </svg>
+            </div>
+
+            <div class="header-titles">
+                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
+                <h1 class="header-main-title">SEIMEI – SUNA</h1>
+                <h2 class="header-sub-title">AUTO-TEST DE TRI PSYCHOLOGIQUE</h2>
+                <div class="header-subtitle-tag">À REMPLIR SEUL — SANS PSYCHOLOGUE</div>
+            </div>
+
+            <div class="header-emblem right">
+                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
+                <span class="emblem-tag">SEIMEI 葉</span>
+            </div>
+        </header>
+
+        <main class="content-area">
+
+            <!-- ÉTAPE 0 : PRÉSENTATION -->
+            <section id="at-step-intro" class="tab-pane active">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-circle-info"></i> Avant de commencer</h2>
+                    <p>Ce test sert à faire un premier tri. Il n'est pas un diagnostic clinique. Répondez seul, honnêtement, sans vous concerter. Vous ne verrez pas votre score : uniquement une recommandation à la fin.</p>
+                </div>
+                <div class="card card-glass">
+                    <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Confidentialité</div>
+                    <p style="line-height:1.7; color: var(--sand-dim);">
+                        Vos réponses sont transmises directement au service psychologique de Sunagakure. Elles ne sont
+                        pas visibles par votre hiérarchie opérationnelle. Si votre résultat indique un besoin de suivi,
+                        un psychologue vous recontactera pour un second entretien oral.
+                    </p>
+                    <button type="button" class="btn btn-primary margin-top-md" id="at-btn-start">
+                        <i class="fa-solid fa-play"></i> Commencer le test
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 1 : IDENTITÉ -->
+            <section id="at-step-identity" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-id-card"></i> Vos informations</h2>
+                    <p>Ces informations permettent au service psychologique de vous recontacter si nécessaire.</p>
+                </div>
+                <div class="card card-glass">
+                    <form id="at-form-identity" class="form-grid">
+                        <div class="form-group">
+                            <label for="at-name">Nom & Prénom du Shinobi <span class="required">*</span></label>
+                            <input type="text" id="at-name" placeholder="Ex: Gaara du Désert" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="at-grade">Grade Actuel <span class="required">*</span></label>
+                            <select id="at-grade" required>
+                                <option value="Genin">Genin</option>
+                                <option value="Genin Confirmé">Genin Confirmé</option>
+                                <option value="Chunin" selected>Chunin</option>
+                                <option value="Konin">Konin</option>
+                                <option value="Tokubetsu Jonin">Tokubetsu Jonin</option>
+                                <option value="Jonin">Jonin</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="at-age">Âge</label>
+                            <input type="number" id="at-age" min="10" max="80" value="19">
+                        </div>
+                        <div class="form-group">
+                            <label for="at-gender">Sexe</label>
+                            <select id="at-gender">
+                                <option value="M">Masculin (M)</option>
+                                <option value="F">Féminin (F)</option>
+                                <option value="Autre">Autre / Non spécifié</option>
+                            </select>
+                        </div>
+                    </form>
+                    <button type="button" class="btn btn-primary margin-top-md" id="at-btn-to-criteria">
+                        <i class="fa-solid fa-arrow-right"></i> Continuer
+                    </button>
+                </div>
+            </section>
+
+            <!-- ÉTAPE 2 : CRITÈRES -->
+            <section id="at-step-criteria" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-list-check"></i> Auto-évaluation (1/2)</h2>
+                    <p>Pour chaque point, choisissez l'appréciation qui vous correspond le mieux aujourd'hui. Il n'y a pas de bonne ou de mauvaise réponse.</p>
+                </div>
+                <div id="at-criteria-container"></div>
+                <button type="button" class="btn btn-primary margin-top-md" id="at-btn-to-scenarios">
+                    <i class="fa-solid fa-arrow-right"></i> Continuer
+                </button>
+            </section>
+
+            <!-- ÉTAPE 3 : MISES EN SITUATION -->
+            <section id="at-step-scenarios" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-dice-d20"></i> Auto-évaluation (2/2)</h2>
+                    <p>Lisez chaque situation puis notez comment vous pensez réagir : 0 (réaction que vous jugez mauvaise) à 3 (réaction que vous jugez adaptée).</p>
+                </div>
+                <div id="at-scenarios-container"></div>
+                <button type="button" class="btn btn-primary margin-top-md" id="at-btn-submit">
+                    <i class="fa-solid fa-paper-plane"></i> Terminer le test
+                </button>
+            </section>
+
+            <!-- ÉTAPE 4 : RÉSULTAT (message uniquement, jamais le score) -->
+            <section id="at-step-result" class="tab-pane">
+                <div class="card card-glass" style="text-align:center; padding: 40px 24px;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 42px; color: var(--sand-primary); margin-bottom: 16px;"></i>
+                    <h2 id="at-result-title" style="margin-bottom: 14px;">Test terminé</h2>
+                    <p id="at-result-message" style="font-size: 16px; line-height: 1.7; color: var(--sand-light); max-width: 560px; margin: 0 auto;"></p>
+                    <p style="margin-top: 24px; font-size: 12px; color: var(--sand-dim);">Merci d'avoir complété ce test. Vos réponses ont été transmises au service psychologique.</p>
+                </div>
+            </section>
+
+        </main>
+
+        <div class="footer-links">
+            <a href="index.html"><i class="fa-solid fa-user-doctor"></i> Espace psychologue</a>
+            <a href="referentiel.html"><i class="fa-solid fa-book"></i> Référentiel (gérance)</a>
+        </div>
+    </div>
+
+    <script src="supabase.js"></script>
+    <script src="config.js"></script>
+    <script src="data.js"></script>
+    <script src="scenarios.js"></script>
+    <script src="auto-test.js"></script>
+</body>
+</html>

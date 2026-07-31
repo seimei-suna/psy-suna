@@ -69,6 +69,14 @@
                 <i class="fa-solid fa-file-contract"></i>
                 <span>6. Rapport & Vues</span>
             </button>
+            <button class="nav-btn" data-tab="tab-patients">
+                <i class="fa-solid fa-users"></i>
+                <span>Patients</span>
+            </button>
+            <button class="nav-btn" data-tab="tab-autotests">
+                <i class="fa-solid fa-clipboard-user"></i>
+                <span>Auto-tests</span>
+            </button>
             <button class="nav-btn" data-tab="tab-historique">
                 <i class="fa-solid fa-folder-open"></i>
                 <span>Historique</span>
@@ -181,6 +189,24 @@
                                 <span class="checkmark"></span>
                                 <span class="check-text"><strong>Stabilité face aux questions sensibles / traumatiques</strong></span>
                             </label>
+                        </div>
+
+                        <div class="impression-box">
+                            <div class="impression-label">
+                                <i class="fa-solid fa-eye"></i> Première impression clinique
+                                <span class="impression-hint">Pondération officielle : -1 / 0 / +1 point</span>
+                            </div>
+                            <div class="impression-buttons">
+                                <button type="button" class="impression-btn imp-neg" data-imp="-1">
+                                    <strong>-1</strong><span>Défavorable</span>
+                                </button>
+                                <button type="button" class="impression-btn imp-neutral selected" data-imp="0">
+                                    <strong>0</strong><span>Neutre</span>
+                                </button>
+                                <button type="button" class="impression-btn imp-pos" data-imp="1">
+                                    <strong>+1</strong><span>Favorable</span>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="alert alert-info">
@@ -343,7 +369,7 @@
                         </div>
 
                         <div class="bonus-total-badge">
-                            Total Bonus Standard : <span id="total-bonus-display" class="highlight-pos">+0 points</span> (Max +4 pts)
+                            Total Bonus Standard : <span id="total-bonus-display" class="highlight-pos">+0 points</span> (Max +2 pts)
                         </div>
                     </div>
                 </div>
@@ -403,17 +429,25 @@
                         <div class="gauge-wrapper">
                             <div class="score-circle" id="score-circle">
                                 <span class="score-number" id="final-score-val">0</span>
-                                <span class="score-max">/ 50</span>
+                                <span class="score-max">/ 52</span>
                             </div>
                         </div>
 
                         <div class="math-breakdown-box">
                             <div class="math-row">
-                                <span>Appréciation Clinique (Critères)</span>
-                                <strong id="breakdown-crit-val">0 pts</strong>
+                                <span>Critères cliniques (8 × 5)</span>
+                                <strong id="breakdown-crit-val">0 / 40 pts</strong>
+                            </div>
+                            <div class="math-row">
+                                <span>+ Mises en situation (3 × 3)</span>
+                                <strong id="breakdown-scenarios-val">+0 / 9 pts</strong>
+                            </div>
+                            <div class="math-row" style="color: var(--sand-primary);">
+                                <span>+/- Première impression clinique</span>
+                                <strong id="breakdown-impression-val">+0 pt</strong>
                             </div>
                             <div class="math-row text-success">
-                                <span>+ Bonus Cliniques Standard</span>
+                                <span>+ Bonus cliniques (max +2)</span>
                                 <strong id="breakdown-bonus-val">+0 pts</strong>
                             </div>
                             <div class="math-row text-danger">
@@ -426,7 +460,7 @@
                             </div>
                             <div class="math-row math-total">
                                 <span>= SCORE FINAL SEIMEI</span>
-                                <strong id="breakdown-total-val">0 / 50</strong>
+                                <strong id="breakdown-total-val">0 / 52</strong>
                             </div>
                         </div>
                     </div>
@@ -445,27 +479,31 @@
                         </div>
 
                         <div class="thresholds-reference-table margin-top-md">
-                            <h4>Rappel des Barèmes de Décision (0-50 pts)</h4>
+                            <h4>Rappel des Barèmes de Décision (0-52 pts)</h4>
                             <ul>
-                                <li class="range-item r-5" data-range="45-50">
-                                    <span class="range-tag">45 – 50 pts</span>
-                                    <strong>MAINTIEN DU GRADE</strong> — Shinobi apte sans restriction.
+                                <li class="range-item r-6" data-range="40-52">
+                                    <span class="range-tag">40 – 52 pts</span>
+                                    <strong>MAINTIEN DU GRADE</strong> — Aucune restriction, aptitude pleine et entière.
                                 </li>
-                                <li class="range-item r-4" data-range="35-44">
-                                    <span class="range-tag">35 – 44 pts</span>
-                                    <strong>MAINTIEN AVEC SUIVI</strong> — Apte avec suivi psychologique régulier.
+                                <li class="range-item r-5" data-range="34-39">
+                                    <span class="range-tag">34 – 39 pts</span>
+                                    <strong>MAINTIEN AVEC RECOMMANDATIONS</strong> — Aptitude confirmée, suivi facultatif.
                                 </li>
-                                <li class="range-item r-3" data-range="25-34">
-                                    <span class="range-tag">25 – 34 pts</span>
-                                    <strong>RESTRICTION TEMPORAIRE</strong> — Mission à risque interdite 7 à 14 jours.
+                                <li class="range-item r-4" data-range="28-33">
+                                    <span class="range-tag">28 – 33 pts</span>
+                                    <strong>MAINTIEN AVEC RESTRICTIONS TEMPORAIRES</strong> — Missions A/S, commandement et missions sensibles restreintes.
                                 </li>
-                                <li class="range-item r-2" data-range="15-24">
-                                    <span class="range-tag">15 – 24 pts</span>
-                                    <strong>SUSPENSION TEMPORAIRE</strong> — Suspension immédiate des missions.
+                                <li class="range-item r-3" data-range="22-27">
+                                    <span class="range-tag">22 – 27 pts</span>
+                                    <strong>SUIVI RENFORCÉ</strong> — Accompagnement psychologique obligatoire, limitations opérationnelles.
+                                </li>
+                                <li class="range-item r-2" data-range="15-21">
+                                    <span class="range-tag">15 – 21 pts</span>
+                                    <strong>SUSPENSION TEMPORAIRE DES MISSIONS</strong> — Inaptitude opérationnelle temporaire, réévaluation obligatoire.
                                 </li>
                                 <li class="range-item r-1" data-range="0-14">
                                     <span class="range-tag">0 – 14 pts</span>
-                                    <strong>RÉTROGRADATION TEMPORAIRE</strong> — Rétrogradation au grade inférieur.
+                                    <strong>RÉTROGRADATION TEMPORAIRE</strong> — Rétrogradation au grade inférieur, risque important pour l'unité.
                                 </li>
                             </ul>
                         </div>
@@ -505,6 +543,63 @@
             </section>
 
             <!-- TAB 7: HISTORIQUE DES EVALUATIONS -->
+            <!-- TAB: HISTORIQUE PATIENTS (base partagée entre psychologues) -->
+            <section id="tab-patients" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-users"></i> Historique des Patients</h2>
+                    <p>Toutes les évaluations enregistrées par la branche psychologique, avec les réponses détaillées et la note finale. Base partagée : chaque psychologue voit les dossiers de tous les autres.</p>
+                </div>
+
+                <div class="card card-glass">
+                    <div class="patients-toolbar">
+                        <input type="text" id="dossiers-search" placeholder="Rechercher un patient par nom..." autocomplete="off">
+                        <select id="dossiers-filter-decision" autocomplete="off">
+                            <option value="">Toutes les décisions</option>
+                            <option value="MAINTIEN DU GRADE">Maintien du grade</option>
+                            <option value="MAINTIEN DU GRADE AVEC RECOMMANDATIONS">Maintien avec recommandations</option>
+                            <option value="MAINTIEN DU GRADE AVEC RESTRICTIONS TEMPORAIRES">Maintien avec restrictions temporaires</option>
+                            <option value="SUIVI RENFORCÉ">Suivi renforcé</option>
+                            <option value="SUSPENSION TEMPORAIRE DES MISSIONS">Suspension temporaire des missions</option>
+                            <option value="RÉTROGRADATION TEMPORAIRE AU GRADE INFÉRIEUR">Rétrogradation temporaire</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="dossiers-refresh"><i class="fa-solid fa-rotate"></i> Actualiser</button>
+                    </div>
+                    <div id="dossiers-status" class="patients-status">Chargement des dossiers...</div>
+                    <div id="dossiers-list" class="patients-grid"></div>
+                </div>
+            </section>
+
+            <!-- TAB: AUTO-TESTS (auto-tri patient, sans psychologue) -->
+            <section id="tab-autotests" class="tab-pane">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-clipboard-user"></i> Résultats des Auto-tests</h2>
+                    <p>Résultats des auto-tests de tri remplis seuls par les shinobis, avec les scores réels. Repérez les cas à rappeler pour un entretien oral complet et marquez-les comme traités une fois pris en charge.</p>
+                </div>
+
+                <div class="card card-glass">
+                    <div class="patients-toolbar">
+                        <input type="text" id="autotests-search" placeholder="Rechercher un patient par nom..." autocomplete="off">
+                        <select id="autotests-filter-decision" autocomplete="off">
+                            <option value="">Toutes les décisions</option>
+                            <option value="MAINTIEN DU GRADE">Maintien du grade</option>
+                            <option value="MAINTIEN DU GRADE AVEC RECOMMANDATIONS">Maintien avec recommandations</option>
+                            <option value="MAINTIEN DU GRADE AVEC RESTRICTIONS TEMPORAIRES">Maintien avec restrictions temporaires</option>
+                            <option value="SUIVI RENFORCÉ">Suivi renforcé</option>
+                            <option value="SUSPENSION TEMPORAIRE DES MISSIONS">Suspension temporaire des missions</option>
+                            <option value="RÉTROGRADATION TEMPORAIRE AU GRADE INFÉRIEUR">Rétrogradation temporaire</option>
+                        </select>
+                        <select id="autotests-filter-traite" autocomplete="off">
+                            <option value="">Traités et non traités</option>
+                            <option value="non">Non traités uniquement</option>
+                            <option value="oui">Traités uniquement</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="autotests-refresh"><i class="fa-solid fa-rotate"></i> Actualiser</button>
+                    </div>
+                    <div id="autotests-status" class="patients-status">Chargement des auto-tests...</div>
+                    <div id="autotests-list" class="patients-grid"></div>
+                </div>
+            </section>
+
             <section id="tab-historique" class="tab-pane">
                 <div class="pane-header">
                     <h2><i class="fa-solid fa-boxes-packing"></i> Historique des Dossiers Patients Enregistrés</h2>
@@ -543,10 +638,43 @@
         <footer class="main-footer">
             <p>RAPPEL INSTITUTIONNEL : CE DOCUMENT N'EST PAS UN TEST AUTOMATISÉ. IL CONSTITUE UN OUTIL CLINIQUE D'AIDE À LA DÉCISION. VOTRE JUGEMENT PROFESSIONNEL FAIT LA DIFFÉRENCE.</p>
             <div class="footer-legal">ARTICLE 17, 18, 19 DU CODE DE SANTÉ DES SHINOBIS DE SUNAGAKURE • SEIMEI CLINICAL SYSTEM v2.5</div>
+            <div class="footer-links">
+                <a href="auto-test.html"><i class="fa-solid fa-clipboard-user"></i> Auto-test patient</a>
+                <a href="referentiel.html"><i class="fa-solid fa-book"></i> Référentiel (gérance)</a>
+            </div>
         </footer>
     </div>
 
+    <!-- Dossier Detail Modal -->
+    <div class="dossier-modal" id="dossier-modal">
+        <div class="dossier-modal-panel">
+            <div class="dossier-modal-head">
+                <h3 id="dossier-modal-title">Détail du dossier</h3>
+                <button type="button" class="dossier-modal-close" id="dossier-modal-close" aria-label="Fermer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="dossier-modal-body" class="dossier-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Auto-test Detail Modal -->
+    <div class="dossier-modal" id="autotest-modal">
+        <div class="dossier-modal-panel">
+            <div class="dossier-modal-head">
+                <h3 id="autotest-modal-title">Détail de l'auto-test</h3>
+                <button type="button" class="dossier-modal-close" id="autotest-modal-close" aria-label="Fermer">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="autotest-modal-body" class="dossier-modal-body"></div>
+        </div>
+    </div>
+
     <!-- App Scripts -->
+    <script src="supabase.js"></script>
+    <script src="config.js"></script>
+    <script src="data.js"></script>
     <script src="scenarios.js"></script>
     <script src="app.js"></script>
 </body>
