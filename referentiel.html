@@ -43,6 +43,40 @@
             </div>
         </header>
 
+        <!-- Accès réservé -->
+        <section class="card card-glass" id="psy-login-panel" style="max-width: 420px; margin: 40px auto;">
+            <div class="card-title"><i class="fa-solid fa-lock"></i> Accès réservé</div>
+            <p style="color: var(--sand-dim); margin-bottom: 14px;">Ce référentiel est réservé aux psychologues et à la gérance de Sunagakure. Saisissez le code d'accès pour continuer.</p>
+            <div class="form-group">
+                <label for="psy-login-pw">Code d'accès</label>
+                <input type="password" id="psy-login-pw" placeholder="••••••••" autocomplete="off">
+            </div>
+            <button type="button" class="btn btn-primary" id="psy-login-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+                <i class="fa-solid fa-right-to-bracket"></i> Accéder
+            </button>
+            <p id="psy-login-error" style="color: #e74c3c; margin-top: 10px; font-size: 13px;"></p>
+        </section>
+        <script>
+            (function () {
+                var loginPanel = document.getElementById('psy-login-panel');
+                var pwInput = document.getElementById('psy-login-pw');
+                var errorEl = document.getElementById('psy-login-error');
+
+                function attempt() {
+                    var expected = (typeof PSY_ACCESS_CODE !== 'undefined') ? PSY_ACCESS_CODE : 'seimei-psy';
+                    if (pwInput.value === expected) {
+                        loginPanel.style.display = 'none';
+                        document.getElementById('psy-dash').style.display = 'block';
+                    } else {
+                        errorEl.textContent = 'Code incorrect.';
+                    }
+                }
+                document.getElementById('psy-login-btn').addEventListener('click', attempt);
+                pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') attempt(); });
+            })();
+        </script>
+
+        <div id="psy-dash" style="display: none;">
         <main class="content-area">
 
             <section class="tab-pane active">
@@ -118,8 +152,10 @@
             <a href="index.html"><i class="fa-solid fa-user-doctor"></i> Espace psychologue</a>
             <a href="auto-test.html"><i class="fa-solid fa-clipboard-user"></i> Auto-test patient</a>
         </div>
+        </div>
     </div>
 
+    <script src="config.js"></script>
     <script src="data.js"></script>
     <script src="scenarios.js"></script>
     <script src="referentiel.js"></script>

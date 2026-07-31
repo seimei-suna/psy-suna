@@ -43,6 +43,40 @@
             </div>
         </header>
 
+        <!-- Accès réservé psychologues -->
+        <section class="card card-glass" id="psy-login-panel" style="max-width: 420px; margin: 40px auto;">
+            <div class="card-title"><i class="fa-solid fa-lock"></i> Accès réservé</div>
+            <p style="color: var(--sand-dim); margin-bottom: 14px;">Cet espace est réservé aux psychologues de Sunagakure. Saisissez le code d'accès pour continuer.</p>
+            <div class="form-group">
+                <label for="psy-login-pw">Code d'accès</label>
+                <input type="password" id="psy-login-pw" placeholder="••••••••" autocomplete="off">
+            </div>
+            <button type="button" class="btn btn-primary" id="psy-login-btn" style="width: 100%; justify-content: center; margin-top: 10px;">
+                <i class="fa-solid fa-right-to-bracket"></i> Accéder
+            </button>
+            <p id="psy-login-error" style="color: #e74c3c; margin-top: 10px; font-size: 13px;"></p>
+        </section>
+        <script>
+            (function () {
+                var loginPanel = document.getElementById('psy-login-panel');
+                var pwInput = document.getElementById('psy-login-pw');
+                var errorEl = document.getElementById('psy-login-error');
+
+                function attempt() {
+                    var expected = (typeof PSY_ACCESS_CODE !== 'undefined') ? PSY_ACCESS_CODE : 'seimei-psy';
+                    if (pwInput.value === expected) {
+                        loginPanel.style.display = 'none';
+                        document.getElementById('psy-dash').style.display = 'block';
+                    } else {
+                        errorEl.textContent = 'Code incorrect.';
+                    }
+                }
+                document.getElementById('psy-login-btn').addEventListener('click', attempt);
+                pwInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') attempt(); });
+            })();
+        </script>
+
+        <div id="psy-dash" style="display: none;">
         <!-- Navigation Tabs -->
         <nav class="nav-tabs" aria-label="Navigation principale">
             <button class="nav-btn active" data-tab="tab-patient">
@@ -643,6 +677,7 @@
                 <a href="referentiel.html"><i class="fa-solid fa-book"></i> Référentiel (gérance)</a>
             </div>
         </footer>
+        </div>
     </div>
 
     <!-- Dossier Detail Modal -->
