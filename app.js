@@ -724,7 +724,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const criteres = (rep.criteres || []).map(c =>
             `<li><span>${escapeHtml(c.titre)}</span><strong>${c.note} / 5</strong></li>`).join('');
         const situations = (rep.mises_en_situation || []).map(s =>
-            `<li><span>${escapeHtml(s.titre)} <em>(${escapeHtml(s.categorie)})</em></span><strong>${s.note} / 3</strong></li>`).join('');
+            `<li style="flex-direction: column; align-items: flex-start; gap: 4px;">
+                <span style="display:flex; justify-content:space-between; width:100%;">
+                    <span>${escapeHtml(s.titre)} <em>(${escapeHtml(s.categorie)})</em></span>
+                    <strong>${s.note} / 3</strong>
+                </span>
+                ${s.reponse_choisie ? `<span style="font-size:12px; color: var(--sand-dim);">Réponse choisie : ${escapeHtml(s.reponse_choisie)}</span>` : ''}
+            </li>`).join('');
 
         document.getElementById('autotest-modal-title').textContent =
             r.patient_nom + ' — ' + r.score_final + ' / ' + maxAuto + ' (' + (r.decision || '—') + ')';

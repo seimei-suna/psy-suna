@@ -28,7 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shuffled = [...SCENARIOS_BANK].sort(() => 0.5 - Math.random());
     state.activeScenarios = shuffled.slice(0, BAREME.NB_SCENARIOS);
-    state.activeScenarios.forEach(sc => { state.scenarioScores[sc.id] = 0; });
+    // Ordre d'affichage des 4 réponses mélangé une seule fois par scénario
+    // (pas à chaque rendu) pour ne pas désorienter le patient, et pour que
+    // la bonne réponse ne soit jamais systématiquement à la même position.
+    state.scenarioChoices = {};
+    state.activeScenarios.forEach(sc => {
+        state.scenarioScores[sc.id] = null;
+        state.scenarioChoices[sc.id] = [...(sc.reponses || [])].sort(() => 0.5 - Math.random());
+    });
 
     // ── Navigation entre étapes ──
     function goToStep(stepId) {
@@ -100,14 +107,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── Rendu des mises en situation (sans indices réservés au psychologue) ──
+    // ── Rendu des mises en situation : 4 réponses à choix multiple par
+    // scénario (aucun indice réservé au psychologue, aucun score visible).
     function renderScenarios() {
         const container = document.getElementById('at-scenarios-container');
         container.innerHTML = state.activeScenarios.map(sc => {
-            const val = state.scenarioScores[sc.id] ?? 0;
-            const notesHtml = [0, 1, 2, 3].map(n => `
-                <button type="button" class="scenario-rate-btn ${val === n ? 'selected' : ''}"
-                        data-sc="${sc.id}" data-pts="${n}">${n}</button>
+            const val = state.scenarioScores[sc.id];
+            const choices = state.scenarioChoices[sc.id] || [];
+            const choicesHtml = choices.map((c, i) => `
+                <button type="button" class="scenario-choice-btn ${val === c.pts ? 'selected' : ''}"
+                        data-sc="${sc.id}" data-pts="${c.pts}">${c.text}</button>
             `).join('');
             return `
             <div class="scenario-card">
@@ -117,13 +126,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="scenario-desc" style="margin-top: 8px;">${sc.desc}</p>
                 </div>
                 <div class="scenario-scoring">
-                    <span class="scenario-scoring-label"><i class="fa-solid fa-star-half-stroke"></i> Votre réaction</span>
-                    <div class="scenario-rate-group">${notesHtml}<span class="scenario-rate-max">/ 3</span></div>
+                    <span class="scenario-scoring-label"><i class="fa-solid fa-star-half-stroke"></i> Que faites-vous ?</span>
+                    <div class="scenario-choice-group">${choicesHtml}</div>
                 </div>
             </div>`;
         }).join('');
 
-        container.querySelectorAll('.scenario-rate-btn').forEach(btn => {
+        container.querySelectorAll('.scenario-choice-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 state.scenarioScores[btn.getAttribute('data-sc')] = parseInt(btn.getAttribute('data-pts'));
                 renderScenarios();
@@ -148,12 +157,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 titre: c.title,
                 note: state.criteriaScores[c.id] ?? 0
             })),
-            mises_en_situation: state.activeScenarios.map(sc => ({
-                id: sc.id,
-                categorie: sc.category,
-                titre: sc.title,
-                note: state.scenarioScores[sc.id] ?? 0
-            }))
+            mises_en_situation: state.activeScenarios.map(sc => {
+                const chosenPts = state.scenarioScores[sc.id] ?? 0;
+                const chosen = (sc.reponses || []).find(r => r.pts === chosenPts);
+                return {
+                    id: sc.id,
+                    categorie: sc.category,
+                    titre: sc.title,
+                    note: chosenPts,
+                    reponse_choisie: chosen ? chosen.text : ''
+                };
+            })
         };
 
         const row = {

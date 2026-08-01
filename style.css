@@ -1307,6 +1307,17 @@ input:checked + .slider:before {
 .scenario-rate-btn:hover { border-color: var(--sand-primary); }
 .scenario-rate-btn.selected { background: var(--sand-primary); color: #14090c; border-color: var(--sand-primary); }
 .scenario-rate-max { font-size: 12px; color: var(--sand-dim); margin-left: 2px; }
+
+/* Choix multiple des mises en situation dans l'auto-test (aucun score visible) */
+.scenario-choice-group { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+.scenario-choice-btn {
+    text-align: left; padding: 10px 14px; border-radius: 8px; cursor: pointer;
+    font-family: inherit; font-size: 13px; line-height: 1.5;
+    background: rgba(0, 0, 0, .25); color: var(--sand-light);
+    border: 1px solid rgba(212, 175, 122, .3); transition: .15s;
+}
+.scenario-choice-btn:hover { border-color: var(--sand-primary); }
+.scenario-choice-btn.selected { border-color: var(--sand-primary); background: rgba(212, 175, 122, 0.15); }
 .scenario-expected {
     margin-top: 10px; padding: 10px 12px; border-radius: 8px; font-size: 13px; line-height: 1.55;
     background: rgba(46, 160, 87, .08); border-left: 3px solid var(--status-green);
