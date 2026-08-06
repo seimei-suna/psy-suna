@@ -1,6 +1,6 @@
 // Base dédiée à SEIMEI - SUNA (Test psy)
-var SUPABASE_URL = "https://ltqltvfjpczdstkfrwpo.supabase.co";
-var SUPABASE_KEY = "sb_publishable_9O3wYyIAy3RZKQw9uq_Tqg_4YtjMGC2";
+var SUPABASE_URL = "https://pttviwbxrlgctcztuqca.supabase.co";
+var SUPABASE_KEY = "sb_publishable_ygztPuo5VHFMFQrFbbil6w_OpP_sKfh";
 
 // L'espace psychologue (index.html, referentiel.html, tests.html, ...)
 // est désormais protégé par de vrais comptes individuels (psy_membres,
