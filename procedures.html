@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIMEI - SUNA | Procédures</title>
+    <meta name="description" content="Procédures de suivi psychologique de la branche psychologique SEIMEI - SUNA.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="procedures">
+    <div class="psy-shell">
+    <aside id="psy-sidebar" class="psy-sidebar"></aside>
+    <div class="psy-shell-main">
+    <div class="app-container">
+        <header class="main-header" id="header">
+            <div class="header-emblem left">
+                <svg viewBox="0 0 100 100" class="emblem-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
+                </svg>
+            </div>
+            <div class="header-titles">
+                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
+                <h1 class="header-main-title">PROCÉDURES</h1>
+                <h2 class="header-sub-title">DÉROULÉ DU SUIVI PSYCHOLOGIQUE, DE A À Z</h2>
+                <div class="header-subtitle-tag">BRANCHE PSYCHOLOGIQUE SEIMEI</div>
+            </div>
+            <div class="header-emblem right">
+                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
+                <span class="emblem-tag">SEIMEI 葉</span>
+            </div>
+        </header>
+
+        <div id="psy-auth-gate"></div>
+
+        <div id="psy-app" class="hidden">
+        <main class="content-area">
+            <section class="tab-pane active">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-diagram-project"></i> Procédures de la branche</h2>
+                    <p>Référence unique du déroulé d'un suivi. Édition réservée à la Gérance / Seimei.</p>
+                </div>
+
+                <div class="card card-glass" id="procedures-edit-card">
+                    <div class="card-title"><i class="fa-solid fa-plus"></i> Ajouter une procédure</div>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="procedure-titre">Titre</label>
+                            <input type="text" id="procedure-titre" placeholder="Ex: 5. Cas de mise en pause">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="procedure-contenu">Contenu</label>
+                            <textarea id="procedure-contenu" rows="5"></textarea>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="btn-add-procedure" style="margin-top:10px;">
+                        <i class="fa-solid fa-floppy-disk"></i> Ajouter
+                    </button>
+                </div>
+
+                <div id="procedures-list" style="margin-top:14px;"></div>
+            </section>
+        </main>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script src="supabase.js"></script>
+    <script src="config.js"></script>
+    <script src="common-psy.js"></script>
+    <script src="auth.js"></script>
+    <script src="data.js"></script>
+    <script src="procedures.js"></script>
+</body>
+</html>

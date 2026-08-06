@@ -1417,3 +1417,147 @@ input:checked + .slider:before {
 .footer-links { margin-top: 10px; display: flex; justify-content: center; gap: 18px; }
 .footer-links a { font-size: 12px; color: var(--sand-primary); text-decoration: none; opacity: .85; }
 .footer-links a:hover { opacity: 1; text-decoration: underline; }
+
+/* ==========================================================================
+   BACK-OFFICE BRANCHE PSYCHOLOGIQUE — sidebar, auth, modules v2
+   ========================================================================== */
+
+.hidden { display: none !important; }
+
+/* --- Layout général avec sidebar --- */
+.psy-shell {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.psy-shell-main { flex: 1; min-width: 0; }
+
+.psy-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    backdrop-filter: var(--glass-blur);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+}
+
+.psy-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--sand-light);
+    letter-spacing: 1px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-color);
+}
+.psy-sidebar-brand i { color: var(--sand-primary); font-size: 20px; }
+
+.psy-sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+.psy-nav-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 8px;
+    color: var(--text-secondary); text-decoration: none;
+    font-size: 13px; font-weight: 600;
+    transition: var(--transition-fast);
+}
+.psy-nav-link i { width: 16px; text-align: center; color: var(--sand-dim); }
+.psy-nav-link:hover { background: rgba(230, 200, 148, 0.08); color: var(--sand-light); }
+.psy-nav-link.active { background: linear-gradient(135deg, var(--burgundy-mid), var(--burgundy-bright)); color: var(--sand-light); box-shadow: var(--glow-gold); }
+.psy-nav-link.active i { color: var(--sand-primary); }
+
+.psy-sidebar-user {
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+}
+.psy-sidebar-user-name { font-weight: 700; color: var(--sand-light); font-size: 14px; }
+.psy-sidebar-user-role {
+    display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px; padding: 2px 9px; border-radius: 20px;
+}
+.role-badge-psychologue { background: rgba(52, 152, 219, .18); color: #85c1e9; border: 1px solid rgba(52, 152, 219, .4); }
+.role-badge-gerance_psy { background: rgba(230, 200, 148, .18); color: var(--sand-primary); border: 1px solid var(--border-color-gold); }
+.role-badge-seimei { background: rgba(231, 76, 60, .18); color: #f1948a; border: 1px solid rgba(231, 76, 60, .4); }
+
+.categorie-badge {
+    display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 9px;
+    border-radius: 20px; background: rgba(255,255,255,.06); color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+@media (max-width: 900px) {
+    .psy-shell { flex-direction: column; }
+    .psy-sidebar { width: 100%; position: relative; top: 0; max-height: none; }
+}
+
+/* --- Statuts de suivi (façon "badgeuse") --- */
+.suivi-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; padding: 4px 11px; border-radius: 20px; }
+.suivi-badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; }
+.suivi-actif { background: rgba(46, 204, 113, .15); color: #7be3a3; border: 1px solid rgba(46, 204, 113, .4); }
+.suivi-actif::before { background: var(--status-green); box-shadow: 0 0 6px var(--status-green); }
+.suivi-pause { background: rgba(241, 196, 15, .15); color: #f5d76e; border: 1px solid rgba(241, 196, 15, .4); }
+.suivi-pause::before { background: var(--status-yellow); box-shadow: 0 0 6px var(--status-yellow); }
+.suivi-inactif { background: rgba(231, 76, 60, .15); color: #f1948a; border: 1px solid rgba(231, 76, 60, .4); }
+.suivi-inactif::before { background: var(--status-red); box-shadow: 0 0 6px var(--status-red); }
+
+/* --- Niveau de risque clinique (rapports de séance) --- */
+.risque-badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: .4px; }
+.risque-aucun { background: rgba(46, 204, 113, .12); color: #7be3a3; border: 1px solid rgba(46, 204, 113, .3); }
+.risque-a_surveiller { background: rgba(241, 196, 15, .12); color: #f5d76e; border: 1px solid rgba(241, 196, 15, .3); }
+.risque-preoccupant { background: rgba(230, 126, 34, .15); color: #f0b27a; border: 1px solid rgba(230, 126, 34, .4); }
+.risque-urgent { background: rgba(231, 76, 60, .2); color: #f1948a; border: 1px solid rgba(231, 76, 60, .5); animation: risque-pulse 1.6s infinite; }
+@keyframes risque-pulse { 0%, 100% { box-shadow: 0 0 0 rgba(231,76,60,0); } 50% { box-shadow: 0 0 10px rgba(231,76,60,.6); } }
+
+/* --- Fil de communications --- */
+.comm-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+.comm-card.epingle { border-color: var(--border-color-gold); box-shadow: var(--glow-gold); }
+.comm-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.comm-title { font-family: var(--font-heading); font-size: 16px; color: var(--sand-light); }
+.comm-meta { font-size: 12px; color: var(--sand-dim); margin-top: 2px; }
+.comm-body { margin-top: 10px; font-size: 14px; line-height: 1.7; white-space: pre-wrap; }
+.comm-pin-tag { font-size: 11px; font-weight: 700; color: var(--sand-primary); text-transform: uppercase; letter-spacing: .5px; }
+
+/* --- Cartes membres (Gérance) --- */
+.membre-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; cursor: pointer; transition: var(--transition-fast); flex-wrap: wrap; }
+.membre-card:hover { background: var(--bg-card-hover); border-color: var(--border-color-gold); }
+.membre-card-info { display: flex; flex-direction: column; gap: 4px; }
+.membre-card-name { font-weight: 700; color: var(--sand-light); }
+.membre-card-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* --- Timeline d'activité (Gérance) --- */
+.activity-day-group { margin-bottom: 18px; }
+.activity-day-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--sand-primary); margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px dashed var(--border-color); }
+.activity-row { display: flex; align-items: flex-start; gap: 12px; padding: 8px 4px; border-bottom: 1px solid rgba(255,255,255,.04); }
+.activity-row-icon { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: rgba(230, 200, 148, .1); display: flex; align-items: center; justify-content: center; color: var(--sand-primary); font-size: 13px; }
+.activity-row-body { flex: 1; min-width: 0; }
+.activity-row-title { font-size: 13px; font-weight: 600; color: var(--sand-light); }
+.activity-row-meta { font-size: 12px; color: var(--sand-dim); margin-top: 2px; }
+.activity-row-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+/* --- Fiche patient unifiée --- */
+.patient-fiche-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+.patient-fiche-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+
+/* --- Documents (procédures / formation) --- */
+.doc-list-item { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+.doc-list-item h3 { font-family: var(--font-heading); font-size: 16px; color: var(--sand-light); margin-bottom: 8px; }
+.doc-list-item .doc-content { font-size: 14px; line-height: 1.7; white-space: pre-wrap; color: var(--text-secondary); }
+
+/* --- Tableau des tarifs --- */
+.tarifs-table { width: 100%; border-collapse: collapse; }
+.tarifs-table th, .tarifs-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
+.tarifs-table th { color: var(--sand-primary); text-transform: uppercase; font-size: 11px; letter-spacing: .5px; }
+.tarifs-table td.price { font-weight: 700; color: var(--sand-light); white-space: nowrap; }

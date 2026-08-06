@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIMEI - SUNA | Suivi Psychologique</title>
+    <meta name="description" content="Suivi psychologique des shinobis (actif / pause / inactif) et rapports de séance de la branche psychologique SEIMEI - SUNA.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="suivis">
+    <div class="psy-shell">
+    <aside id="psy-sidebar" class="psy-sidebar"></aside>
+    <div class="psy-shell-main">
+    <div class="app-container">
+        <header class="main-header" id="header">
+            <div class="header-emblem left">
+                <svg viewBox="0 0 100 100" class="emblem-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
+                </svg>
+            </div>
+            <div class="header-titles">
+                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
+                <h1 class="header-main-title">SUIVI PSYCHOLOGIQUE</h1>
+                <h2 class="header-sub-title">ACTIFS • EN PAUSE • CLÔTURÉS</h2>
+                <div class="header-subtitle-tag">BRANCHE PSYCHOLOGIQUE SEIMEI</div>
+            </div>
+            <div class="header-emblem right">
+                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
+                <span class="emblem-tag">SEIMEI 葉</span>
+            </div>
+        </header>
+
+        <div id="psy-auth-gate"></div>
+
+        <div id="psy-app" class="hidden">
+        <main class="content-area">
+
+            <!-- VUE LISTE -->
+            <section class="tab-pane active" id="suivis-list-view">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-heart-pulse"></i> Suivi Psychologique</h2>
+                    <p>Tous les patients en suivi, avec leur statut — façon "badgeuse". Cliquez sur un patient pour ouvrir sa fiche complète et ses rapports de séance.</p>
+                </div>
+
+                <div class="card card-glass">
+                    <div class="patients-toolbar">
+                        <input type="text" id="suivis-search" placeholder="Rechercher un patient..." autocomplete="off">
+                        <select id="suivis-filter-statut">
+                            <option value="">Tous les statuts</option>
+                            <option value="actif">Actif</option>
+                            <option value="pause">En pause</option>
+                            <option value="inactif">Inactif / Clôturé</option>
+                        </select>
+                        <button type="button" class="btn btn-primary btn-glow" id="btn-open-new-suivi">
+                            <i class="fa-solid fa-plus"></i> Nouveau suivi
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="suivis-refresh"><i class="fa-solid fa-rotate"></i> Actualiser</button>
+                    </div>
+                    <div id="suivis-status" class="patients-status">Chargement des suivis...</div>
+                    <div id="suivis-list" class="patients-grid"></div>
+                </div>
+            </section>
+
+            <!-- VUE FICHE DE SUIVI -->
+            <section class="tab-pane" id="suivi-detail-view">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-back-to-list" style="margin-bottom: 14px;">
+                    <i class="fa-solid fa-arrow-left"></i> Retour à la liste
+                </button>
+
+                <div class="card card-glass">
+                    <div class="patient-fiche-header">
+                        <div>
+                            <h2 id="suivi-detail-name" style="font-family: var(--font-heading); font-size: 22px; color: var(--sand-light);"></h2>
+                            <span id="suivi-detail-badge"></span>
+                        </div>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                            <button type="button" class="btn btn-secondary btn-sm" data-statut="actif" id="btn-statut-actif"><i class="fa-solid fa-play"></i> Réactiver</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-statut="pause" id="btn-statut-pause"><i class="fa-solid fa-pause"></i> Mettre en pause</button>
+                            <button type="button" class="btn btn-danger btn-sm" data-statut="inactif" id="btn-statut-inactif"><i class="fa-solid fa-stop"></i> Clôturer</button>
+                        </div>
+                    </div>
+
+                    <div class="detail-grid" id="suivi-detail-info"></div>
+
+                    <h4 class="detail-title">Historique des statuts</h4>
+                    <ul class="detail-list" id="suivi-detail-historique"></ul>
+                </div>
+
+                <div class="card card-glass margin-top-md">
+                    <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> Rapports de séance</div>
+                    <button type="button" class="btn btn-primary" id="btn-open-new-rapport" style="margin-bottom: 14px;">
+                        <i class="fa-solid fa-plus"></i> Ajouter un rapport de séance
+                    </button>
+                    <div id="rapports-list"></div>
+                </div>
+            </section>
+
+        </main>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Modal : nouveau statut (motif) -->
+    <div id="modal-statut-change" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <h3 id="modal-statut-title">Changer le statut</h3>
+                <button class="btn-close" id="btn-close-statut-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label id="modal-statut-motif-label" for="statut-motif">Motif</label>
+                    <textarea id="statut-motif" rows="3" placeholder="Motif du changement de statut..."></textarea>
+                </div>
+                <p id="modal-statut-error" style="color:#e74c3c; font-size:13px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-statut-modal">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-confirm-statut-modal">Confirmer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal : nouveau suivi -->
+    <div id="modal-new-suivi" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-plus"></i> Ouvrir un nouveau suivi</h3>
+                <button class="btn-close" id="btn-close-new-suivi">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <label for="new-suivi-patient">Patient (nom & prénom)</label>
+                        <input type="text" id="new-suivi-patient" list="suivis-patient-list" placeholder="Ex: Gaara du Désert" required>
+                        <datalist id="suivis-patient-list"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-suivi-referent">Psychologue référent</label>
+                        <input type="text" id="new-suivi-referent">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-suivi-coreferent">Co-référent (optionnel)</label>
+                        <input type="text" id="new-suivi-coreferent">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-suivi-frequence">Fréquence prévue</label>
+                        <input type="text" id="new-suivi-frequence" placeholder="Ex: 1 séance / semaine">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-suivi-date-debut">Date de début</label>
+                        <input type="date" id="new-suivi-date-debut">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-suivi-motif">Motif d'entrée en suivi</label>
+                        <textarea id="new-suivi-motif" rows="3"></textarea>
+                    </div>
+                </div>
+                <p id="new-suivi-error" style="color:#e74c3c; font-size:13px; margin-top:8px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-new-suivi">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-save-new-suivi"><i class="fa-solid fa-floppy-disk"></i> Créer le suivi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal : nouveau rapport de séance -->
+    <div id="modal-new-rapport" class="modal-overlay hidden">
+        <div class="modal-content card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-pen-to-square"></i> Rapport de séance</h3>
+                <button class="btn-close" id="btn-close-new-rapport">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="new-rapport-date">Date de la séance</label>
+                        <input type="date" id="new-rapport-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-rapport-duree">Durée (minutes)</label>
+                        <input type="number" id="new-rapport-duree" min="5" max="240" value="45">
+                    </div>
+                    <div class="form-group">
+                        <label for="new-rapport-humeur">Humeur générale</label>
+                        <select id="new-rapport-humeur">
+                            <option value="stable">Stable</option>
+                            <option value="instable">Instable</option>
+                            <option value="degradee">Dégradée</option>
+                            <option value="en_amelioration">En amélioration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-rapport-risque">Niveau de risque perçu</label>
+                        <select id="new-rapport-risque">
+                            <option value="aucun">Aucun</option>
+                            <option value="a_surveiller">À surveiller</option>
+                            <option value="preoccupant">Préoccupant</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-rapport-coherence">Cohérence du discours / lucidité</label>
+                        <input type="text" id="new-rapport-coherence" placeholder="Ex: discours cohérent, bonne lucidité">
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-rapport-resume">Résumé de la séance</label>
+                        <textarea id="new-rapport-resume" rows="3"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-rapport-objectifs">Objectifs abordés</label>
+                        <textarea id="new-rapport-objectifs" rows="2"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-rapport-recommandations">Recommandations / prochaine étape</label>
+                        <textarea id="new-rapport-recommandations" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-rapport-prochaine">Prochaine séance prévue</label>
+                        <input type="date" id="new-rapport-prochaine">
+                    </div>
+                </div>
+                <p id="new-rapport-error" style="color:#e74c3c; font-size:13px; margin-top:8px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-new-rapport">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-save-new-rapport"><i class="fa-solid fa-floppy-disk"></i> Enregistrer le rapport</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase.js"></script>
+    <script src="config.js"></script>
+    <script src="common-psy.js"></script>
+    <script src="auth.js"></script>
+    <script src="data.js"></script>
+    <script src="suivis.js"></script>
+</body>
+</html>

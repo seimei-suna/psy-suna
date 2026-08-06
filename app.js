@@ -64,6 +64,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set today's date in form
     document.getElementById('eval-date').value = appState.patient.evalDate;
 
+    // Pré-remplit le psychologue évaluateur avec le compte connecté (auth.js)
+    const loggedInPsy = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+    if (loggedInPsy) {
+        appState.patient.evaluator = `${loggedInPsy.prenom} ${loggedInPsy.nom}`;
+        const evaluatorInput = document.getElementById('evaluator-name');
+        if (evaluatorInput) evaluatorInput.value = appState.patient.evaluator;
+    }
+
     // Helper for formatting score out of 10
     function formatScoreOutOf10(val) {
         if (val > 0) return `+${val} / 10`;
@@ -379,12 +387,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // HISTORIQUE PATIENTS (base partagée Supabase)
     // ==========================================
-    let sb = null;
-    try {
-        if (typeof SUPABASE_URL !== 'undefined' && typeof window.supabase !== 'undefined') {
-            sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        }
-    } catch (e) { console.error('Client Supabase indisponible :', e); sb = null; }
+    // Client Supabase partagé (créé une seule fois dans common-psy.js) —
+    // évite l'avertissement "Multiple GoTrueClient instances" et garantit
+    // une session cohérente sur toute la page.
+    const sb = (typeof window.sb !== 'undefined') ? window.sb : null;
 
     let dossiersState = { rows: [], loading: false, seq: 0 };
     let dossiersSearchTimer = null;
@@ -443,6 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
             patient_age: parseInt(p.age) || null,
             patient_sexe: p.gender || null,
             evaluateur: p.evaluator || null,
+            psy_id: (typeof getCurrentUser === 'function' && getCurrentUser()) ? getCurrentUser().id : null,
             date_evaluation: p.evalDate || null,
             score_criteres: scores.criteriaTotal,
             score_situations: scores.scenariosTotal,
@@ -454,6 +461,16 @@ document.addEventListener('DOMContentLoaded', () => {
             decision: scores.decision.title,
             reponses: reponses
         };
+
+        // Rattache (ou crée) la fiche patient unique, partagée avec les
+        // registres de tests / suivis, sans jamais dupliquer un patient.
+        try {
+            const pr = await sb.rpc('find_or_create_psy_patient', {
+                p_nom: p.name, p_grade: p.grade, p_unite: p.unit || null,
+                p_age: parseInt(p.age) || null, p_sexe: p.gender || null
+            });
+            if (!pr.error) row.patient_id = pr.data;
+        } catch (e) { console.warn('Liaison fiche patient impossible :', e); }
 
         const res = await sb.from('psy_evaluations').insert([row]);
         if (res.error) throw new Error(res.error.message);
@@ -767,9 +784,15 @@ document.addEventListener('DOMContentLoaded', () => {
     async function markAutotestTraite(id) {
         if (!sb) return;
         const evaluateur = document.getElementById('evaluator-name') ? document.getElementById('evaluator-name').value : '';
+        const loggedInUser = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
         try {
             const res = await sb.from('psy_autotests')
-                .update({ traite: true, traite_par: evaluateur || null, traite_le: new Date().toISOString() })
+                .update({
+                    traite: true,
+                    traite_par: evaluateur || null,
+                    traite_par_id: loggedInUser ? loggedInUser.id : null,
+                    traite_le: new Date().toISOString()
+                })
                 .eq('id', id);
             if (res.error) throw new Error(res.error.message);
             await loadAutotests();

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEIMEI - SUNA | Gérance</title>
+    <meta name="description" content="Gestion des membres et suivi d'activité de la branche psychologique SEIMEI - SUNA — réservé à la Gérance et à la Seimei.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="gerance">
+    <div class="psy-shell">
+    <aside id="psy-sidebar" class="psy-sidebar"></aside>
+    <div class="psy-shell-main">
+    <div class="app-container">
+        <header class="main-header" id="header">
+            <div class="header-emblem left">
+                <svg viewBox="0 0 100 100" class="emblem-svg">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
+                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
+                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
+                </svg>
+            </div>
+            <div class="header-titles">
+                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
+                <h1 class="header-main-title">GÉRANCE</h1>
+                <h2 class="header-sub-title">MEMBRES DE LA BRANCHE & SUIVI D'ACTIVITÉ</h2>
+                <div class="header-subtitle-tag">RÉSERVÉ GÉRANCE / SEIMEI</div>
+            </div>
+            <div class="header-emblem right">
+                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
+                <span class="emblem-tag">SEIMEI 葉</span>
+            </div>
+        </header>
+
+        <div id="psy-auth-gate"></div>
+
+        <div id="psy-app" class="hidden">
+        <main class="content-area">
+
+            <!-- VUE LISTE DES MEMBRES -->
+            <section class="tab-pane active" id="gerance-list-view">
+                <div class="pane-header">
+                    <h2><i class="fa-solid fa-users-gear"></i> Membres de la branche</h2>
+                    <p>Activez les nouveaux comptes, ajustez rôle et catégorie. Cliquez sur un membre pour voir son activité (tests, suivis, rapports) jour par jour.</p>
+                </div>
+
+                <div class="card card-glass" id="gerance-en-attente-card">
+                    <div class="card-title text-danger"><i class="fa-solid fa-user-clock"></i> Comptes en attente d'activation</div>
+                    <div id="gerance-en-attente-list"></div>
+                </div>
+
+                <div class="card card-glass margin-top-md">
+                    <div class="card-title"><i class="fa-solid fa-hospital"></i> Seimei médical & psy</div>
+                    <div id="gerance-groupe-seimei"></div>
+                </div>
+
+                <div class="card card-glass margin-top-md">
+                    <div class="card-title"><i class="fa-solid fa-brain"></i> Branche psychologie uniquement</div>
+                    <div id="gerance-groupe-branche"></div>
+                </div>
+            </section>
+
+            <!-- VUE ACTIVITÉ D'UN MEMBRE -->
+            <section class="tab-pane" id="gerance-detail-view">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-back-to-membres" style="margin-bottom: 14px;">
+                    <i class="fa-solid fa-arrow-left"></i> Retour aux membres
+                </button>
+
+                <div class="card card-glass">
+                    <div class="patient-fiche-header">
+                        <div>
+                            <h2 id="gerance-detail-name" style="font-family: var(--font-heading); font-size: 22px; color: var(--sand-light);"></h2>
+                            <span id="gerance-detail-badges"></span>
+                        </div>
+                        <select id="gerance-activity-period">
+                            <option value="1">Aujourd'hui</option>
+                            <option value="7" selected>7 derniers jours</option>
+                            <option value="30">30 derniers jours</option>
+                            <option value="0">Tout l'historique</option>
+                        </select>
+                    </div>
+                    <div id="gerance-activity-summary" class="patients-status"></div>
+                    <div id="gerance-activity-log"></div>
+                </div>
+            </section>
+
+        </main>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script src="supabase.js"></script>
+    <script src="config.js"></script>
+    <script src="common-psy.js"></script>
+    <script src="auth.js"></script>
+    <script src="data.js"></script>
+    <script src="gerance.js"></script>
+</body>
+</html>
