@@ -71,7 +71,7 @@ async function deleteTarif(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderTopbar('tarifs');
+    renderSidebar('tarifs');
     const canManage = hasAnyRole(getCurrentUser(), ['gerance_psy', 'seimei']);
     document.getElementById('tarifs-edit-card').classList.toggle('hidden', !canManage);
     loadTarifs();

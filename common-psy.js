@@ -97,12 +97,14 @@ function canSee(item, user) {
   return !!user && item.minRoles.includes(user.role);
 }
 
-function renderTopbar(activeId) {
+function renderSidebar(activeId) {
   const el = document.getElementById('psy-sidebar');
   if (!el) return;
   const user = getCurrentUser();
   const itemsHtml = PSY_NAV_ITEMS.filter(it => canSee(it, user)).map(it => `
-    <a class="psy-sidebar-link ${it.id === activeId ? 'active' : ''}" href="${it.href}">${escapeHtml(it.label)}</a>
+    <a class="psy-nav-link ${it.id === activeId ? 'active' : ''}" href="${it.href}">
+      <i class="fa-solid ${it.icon}"></i> <span>${escapeHtml(it.label)}</span>
+    </a>
   `).join('');
 
   el.innerHTML = `
@@ -116,8 +118,10 @@ function renderTopbar(activeId) {
     <nav class="psy-sidebar-nav">${itemsHtml}</nav>
     ${user ? `
       <div class="psy-sidebar-foot">
-        <span class="psy-sidebar-user-name">${escapeHtml(user.prenom)} ${escapeHtml(user.nom)}</span>
-        <span class="psy-sidebar-user-role role-badge-${user.role}">${ROLE_LABELS[user.role] || user.role}</span>
+        <div class="psy-sidebar-user">
+          <span class="psy-sidebar-user-name">${escapeHtml(user.prenom)} ${escapeHtml(user.nom)}</span>
+          <span class="role-badge-${user.role}">${ROLE_LABELS[user.role] || user.role}</span>
+        </div>
         <button type="button" class="btn btn-secondary btn-sm" id="psy-logout-btn" style="width:100%; justify-content:center;">
           <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </button>
