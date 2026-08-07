@@ -70,6 +70,7 @@ const ACTION_TYPE_ICONS = {
 // --- Navigation commune ---
 const PSY_NAV_ITEMS = [
   { id: 'accueil', href: 'index.html', icon: 'fa-user-shield', label: 'Évaluation clinique' },
+  { id: 'autotests', href: 'index.html?tab=autotests', icon: 'fa-clipboard-user', label: 'Auto-tests' },
   { id: 'tests', href: 'tests.html', icon: 'fa-vial-circle-check', label: 'Registre des Tests' },
   { id: 'suivis', href: 'suivis.html', icon: 'fa-heart-pulse', label: 'Suivi Psychologique' },
   { id: 'formation', href: 'formation.html', icon: 'fa-graduation-cap', label: 'Formation & Communications' },

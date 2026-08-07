@@ -1178,4 +1178,12 @@ document.addEventListener('DOMContentLoaded', () => {
     renderScenariosSection();
     renderDiagnosticsSection();
     updateCalculations();
+
+    // Lien direct depuis la sidebar (index.html?tab=autotests) : ouvre
+    // directement l'onglet Auto-tests au lieu de l'onglet Patient par défaut.
+    const requestedTab = new URLSearchParams(location.search).get('tab');
+    if (requestedTab) {
+        const targetBtn = document.querySelector(`.nav-btn[data-tab="tab-${requestedTab}"]`);
+        if (targetBtn) targetBtn.click();
+    }
 });
