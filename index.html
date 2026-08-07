@@ -28,23 +28,23 @@
         <div id="psy-app" class="hidden">
         <!-- Navigation Tabs -->
         <nav class="nav-tabs" aria-label="Navigation principale">
-            <button class="nav-btn active" data-tab="tab-patient">
+            <button class="nav-btn active" data-tab="tab-patient" data-step="1" style="display:none;">
                 <i class="fa-solid fa-user-shield"></i>
                 <span>1. Patient & Entretien</span>
             </button>
-            <button class="nav-btn" data-tab="tab-scenarios">
+            <button class="nav-btn" data-tab="tab-scenarios" data-step="2" style="display:none;">
                 <i class="fa-solid fa-dice-d20"></i>
                 <span>2. Mises en Situation</span>
             </button>
-            <button class="nav-btn" data-tab="tab-bareme">
+            <button class="nav-btn" data-tab="tab-bareme" data-step="3" style="display:none;">
                 <i class="fa-solid fa-list-check"></i>
                 <span>3. Barème Clinique</span>
             </button>
-            <button class="nav-btn" data-tab="tab-resultats">
+            <button class="nav-btn" data-tab="tab-resultats" data-step="4" style="display:none;">
                 <i class="fa-solid fa-calculator"></i>
                 <span>4. Calcul & Synthèse</span>
             </button>
-            <button class="nav-btn highlight-tab" data-tab="tab-rapport">
+            <button class="nav-btn highlight-tab" data-tab="tab-rapport" data-step="5" style="display:none;">
                 <i class="fa-solid fa-file-contract"></i>
                 <span>5. Rapport & Vues</span>
             </button>
@@ -57,6 +57,17 @@
                 <span>Historique</span>
             </button>
         </nav>
+
+        <!-- Navigation séquentielle de l'entretien (remplace les onglets 1 à 5) -->
+        <div id="step-nav-bar" class="card card-glass" style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; padding:14px 20px;">
+            <button type="button" class="btn btn-secondary" id="btn-step-prev">
+                <i class="fa-solid fa-arrow-left"></i> Précédent
+            </button>
+            <span id="step-nav-label" style="font-weight:700; color:var(--gold-light); text-align:center; flex:1;"></span>
+            <button type="button" class="btn btn-primary" id="btn-step-next">
+                Suivant <i class="fa-solid fa-arrow-right"></i>
+            </button>
+        </div>
 
         <main class="content-area">
             <!-- TAB 1: PATIENT & ENTRETIEN -->

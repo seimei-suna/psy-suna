@@ -961,22 +961,58 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCalculations();
     }
 
-    // Navigation Tabs Switcher
+    // Navigation Tabs Switcher — les 5 étapes de l'entretien ne sont plus
+    // des onglets cliquables (boutons cachés) : on avance avec Suivant /
+    // Précédent. Patients et Historique restent des onglets classiques.
+    const STEP_LABELS = { 1: 'Étape 1 / 5 — Patient & Entretien', 2: 'Étape 2 / 5 — Mises en Situation', 3: 'Étape 3 / 5 — Barème Clinique', 4: 'Étape 4 / 5 — Calcul & Synthèse', 5: 'Étape 5 / 5 — Rapport & Vues' };
+
+    function switchToTab(tabTarget) {
+        const btn = document.querySelector(`.nav-btn[data-tab="${tabTarget}"]`);
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        const targetPane = document.getElementById(tabTarget);
+        if (targetPane) targetPane.classList.add('active');
+
+        // L'annuaire n'est chargé qu'à la première ouverture de son onglet
+        if (tabTarget === 'tab-patients') loadDossiers();
+        if (tabTarget === 'tab-autotests') loadAutotests();
+
+        const step = btn ? parseInt(btn.getAttribute('data-step')) : null;
+        const stepNavBar = document.getElementById('step-nav-bar');
+        if (step) {
+            stepNavBar.style.display = 'flex';
+            document.getElementById('step-nav-label').textContent = STEP_LABELS[step] || '';
+            document.getElementById('btn-step-prev').disabled = (step === 1);
+            document.getElementById('btn-step-next').style.visibility = (step === 5) ? 'hidden' : 'visible';
+        } else {
+            stepNavBar.style.display = 'none';
+        }
+    }
+
     document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const tabTarget = btn.getAttribute('data-tab');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-
-            btn.classList.add('active');
-            const targetPane = document.getElementById(tabTarget);
-            if (targetPane) targetPane.classList.add('active');
-
-            // L'annuaire n'est chargé qu'à la première ouverture de son onglet
-            if (tabTarget === 'tab-patients') loadDossiers();
-            if (tabTarget === 'tab-autotests') loadAutotests();
-        });
+        btn.addEventListener('click', () => switchToTab(btn.getAttribute('data-tab')));
     });
+
+    document.getElementById('btn-step-prev').addEventListener('click', () => {
+        const current = document.querySelector('.nav-btn.active[data-step]');
+        const step = current ? parseInt(current.getAttribute('data-step')) : 1;
+        if (step > 1) {
+            const prevBtn = document.querySelector(`.nav-btn[data-step="${step - 1}"]`);
+            if (prevBtn) switchToTab(prevBtn.getAttribute('data-tab'));
+        }
+    });
+    document.getElementById('btn-step-next').addEventListener('click', () => {
+        const current = document.querySelector('.nav-btn.active[data-step]');
+        const step = current ? parseInt(current.getAttribute('data-step')) : 1;
+        if (step < 5) {
+            const nextBtn = document.querySelector(`.nav-btn[data-step="${step + 1}"]`);
+            if (nextBtn) switchToTab(nextBtn.getAttribute('data-tab'));
+        }
+    });
+
+    // Affiche la barre "Suivant / Précédent" dès le chargement (étape 1 active).
+    switchToTab('tab-patient');
 
     // Form Binding
     const updatePatientStateFromInputs = () => {
@@ -1184,14 +1220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // (ce n'est plus un onglet visible dans la barre interne, uniquement
     // accessible via ce lien direct).
     const requestedTab = new URLSearchParams(location.search).get('tab');
-    if (requestedTab) {
-        const targetPane = document.getElementById(`tab-${requestedTab}`);
-        if (targetPane) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            targetPane.classList.add('active');
-            if (requestedTab === 'patients') loadDossiers();
-            if (requestedTab === 'autotests') loadAutotests();
-        }
+    if (requestedTab && document.getElementById(`tab-${requestedTab}`)) {
+        switchToTab(`tab-${requestedTab}`);
     }
 });
