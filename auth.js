@@ -108,8 +108,8 @@ function renderAuthGate() {
       <form id="psy-register-form" class="form-grid hidden">
         <div class="form-group"><label>Nom</label><input type="text" id="psy-reg-nom" autocomplete="off" required></div>
         <div class="form-group"><label>Prénom</label><input type="text" id="psy-reg-prenom" autocomplete="off" required></div>
-        <div class="form-group"><label>Mot de passe (sceau)</label><input type="password" id="psy-reg-sceau" placeholder="6 caractères minimum" autocomplete="new-password" required minlength="6"></div>
-        <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="psy-reg-sceau2" autocomplete="new-password" required minlength="6"></div>
+        <div class="form-group"><label>Mot de passe (sceau)</label><input type="password" id="psy-reg-sceau" autocomplete="new-password" required></div>
+        <div class="form-group"><label>Confirmer le mot de passe</label><input type="password" id="psy-reg-sceau2" autocomplete="new-password" required></div>
         <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;"><i class="fa-solid fa-user-plus"></i> Créer mon compte</button>
         <p id="psy-reg-error" style="color:#e74c3c; font-size:13px; margin-top:6px;"></p>
         <p id="psy-reg-success" style="color:#51cf66; font-size:13px; margin-top:6px;"></p>
@@ -158,7 +158,7 @@ function renderAuthGate() {
     const sceau = document.getElementById('psy-reg-sceau').value;
     const sceau2 = document.getElementById('psy-reg-sceau2').value;
     if (!nom || !prenom) { errEl.textContent = 'Nom et prénom requis.'; return; }
-    if (sceau.length < 6) { errEl.textContent = 'Le mot de passe doit faire au moins 6 caractères.'; return; }
+    if (!sceau) { errEl.textContent = 'Mot de passe requis.'; return; }
     if (sceau !== sceau2) { errEl.textContent = 'Les mots de passe ne correspondent pas.'; return; }
     try {
       await registerPsy(nom, prenom, sceau);
