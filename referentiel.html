@@ -18,7 +18,9 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="referentiel">
-    <div id="psy-topbar"></div>
+    <div class="psy-shell">
+    <aside id="psy-sidebar"></aside>
+    <div class="psy-shell-main">
     <div class="app-container">
         <!-- Accès réservé : vrai compte individuel (voir auth.js) -->
         <div id="psy-auth-gate"></div>
@@ -84,6 +86,8 @@
             <a href="auto-test.html"><i class="fa-solid fa-clipboard-user"></i> Auto-test patient</a>
         </div>
         </div>
+    </div>
+    </div>
     </div>
 
     <script src="supabase.js"></script>

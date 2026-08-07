@@ -98,27 +98,27 @@ function canSee(item, user) {
 }
 
 function renderTopbar(activeId) {
-  const el = document.getElementById('psy-topbar');
+  const el = document.getElementById('psy-sidebar');
   if (!el) return;
   const user = getCurrentUser();
   const itemsHtml = PSY_NAV_ITEMS.filter(it => canSee(it, user)).map(it => `
-    <a class="psy-topbar-link ${it.id === activeId ? 'active' : ''}" href="${it.href}">${escapeHtml(it.label)}</a>
+    <a class="psy-sidebar-link ${it.id === activeId ? 'active' : ''}" href="${it.href}">${escapeHtml(it.label)}</a>
   `).join('');
 
   el.innerHTML = `
-    <div class="psy-topbar-brand">
+    <div class="psy-sidebar-brand">
       <i class="fa-solid fa-staff-snake"></i>
-      <div class="psy-topbar-brand-text">
-        <span class="psy-topbar-brand-title">SEIMEI — SUNA</span>
-        <span class="psy-topbar-brand-sub">Branche Psychologique</span>
+      <div class="psy-sidebar-brand-text">
+        <span class="psy-sidebar-brand-title">SEIMEI — SUNA</span>
+        <span class="psy-sidebar-brand-sub">Branche Psychologique</span>
       </div>
     </div>
-    <nav class="psy-topbar-nav">${itemsHtml}</nav>
+    <nav class="psy-sidebar-nav">${itemsHtml}</nav>
     ${user ? `
-      <div class="psy-topbar-user">
-        <span class="psy-topbar-user-name">${escapeHtml(user.prenom)} ${escapeHtml(user.nom)}</span>
-        <span class="psy-topbar-user-role role-badge-${user.role}">${ROLE_LABELS[user.role] || user.role}</span>
-        <button type="button" class="btn btn-secondary btn-sm" id="psy-logout-btn">
+      <div class="psy-sidebar-foot">
+        <span class="psy-sidebar-user-name">${escapeHtml(user.prenom)} ${escapeHtml(user.nom)}</span>
+        <span class="psy-sidebar-user-role role-badge-${user.role}">${ROLE_LABELS[user.role] || user.role}</span>
+        <button type="button" class="btn btn-secondary btn-sm" id="psy-logout-btn" style="width:100%; justify-content:center;">
           <i class="fa-solid fa-right-from-bracket"></i> Déconnexion
         </button>
       </div>` : ''}
