@@ -18,33 +18,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="accueil">
-    <div class="psy-shell">
-    <aside id="psy-sidebar" class="psy-sidebar"></aside>
-    <div class="psy-shell-main">
+    <div id="psy-topbar"></div>
     <div class="app-container">
-        <!-- Top Institutional Header -->
-        <header class="main-header" id="header">
-            <div class="header-emblem left">
-                <svg viewBox="0 0 100 100" class="emblem-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
-                </svg>
-            </div>
-
-            <div class="header-titles">
-                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
-                <h1 class="header-main-title">SEIMEI – SUNA</h1>
-                <h2 class="header-sub-title">RÉFÉRENTIEL CLINIQUE D'ÉVALUATION PSYCHOLOGIQUE</h2>
-                <div class="header-subtitle-tag">ÉVALUATION DES APTITUDES PSYCHOLOGIQUES AU COMBAT</div>
-            </div>
-
-            <div class="header-emblem right">
-                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
-                <span class="emblem-tag">SEIMEI 葉</span>
-            </div>
-        </header>
-
         <!-- Accès réservé : vrai compte individuel (voir auth.js) -->
         <div id="psy-auth-gate"></div>
 
@@ -63,17 +38,13 @@
                 <i class="fa-solid fa-list-check"></i>
                 <span>3. Barème Clinique</span>
             </button>
-            <button class="nav-btn" data-tab="tab-diagnostics">
-                <i class="fa-solid fa-sliders"></i>
-                <span>4. Diagnostics & "Autre"</span>
-            </button>
             <button class="nav-btn" data-tab="tab-resultats">
                 <i class="fa-solid fa-calculator"></i>
-                <span>5. Calcul & Synthèse</span>
+                <span>4. Calcul & Synthèse</span>
             </button>
             <button class="nav-btn highlight-tab" data-tab="tab-rapport">
                 <i class="fa-solid fa-file-contract"></i>
-                <span>6. Rapport & Vues</span>
+                <span>5. Rapport & Vues</span>
             </button>
             <button class="nav-btn" data-tab="tab-patients">
                 <i class="fa-solid fa-users"></i>
@@ -316,114 +287,10 @@
                 </div>
             </section>
 
-            <!-- TAB 4: DIAGNOSTICS PSYCHOLOGIQUES, BONUS & AJUSTEMENT "AUTRE" -->
-            <section id="tab-diagnostics" class="tab-pane">
-                <div class="pane-header">
-                    <h2><i class="fa-solid fa-sliders"></i> 4 & 5. Diagnostics (Malus), Bonus & Ajustements Personnalisés ("Autre")</h2>
-                    <p>Identifiez les pathologies (-2 à -6 pts), appliquez les bonus de mérite (+2 pts) ou ajoutez un motif "Autre" sur-mesure (ajout ou retrait de points libre).</p>
-                </div>
-
-                <div class="grid-2col">
-                    <!-- SECTION 4: MALUS -->
-                    <div class="card card-glass">
-                        <div class="card-title text-danger">
-                            <i class="fa-solid fa-circle-minus"></i> 4. Diagnostics Psychologiques (Malus)
-                        </div>
-                        <p class="section-desc">
-                            Chaque diagnostic doit être justifié dans le rapport clinique. Plusieurs diagnostics peuvent être retenus.
-                        </p>
-
-                        <div class="diag-group">
-                            <h4 class="diag-cat-title cat-light"><i class="fa-solid fa-circle"></i> Diagnostics Légers (-2 points)</h4>
-                            <div class="diag-options" id="diag-light-options"></div>
-                        </div>
-
-                        <div class="diag-group">
-                            <h4 class="diag-cat-title cat-moderate"><i class="fa-solid fa-triangle-exclamation"></i> Diagnostics Modérés (-4 points)</h4>
-                            <div class="diag-options" id="diag-moderate-options"></div>
-                        </div>
-
-                        <div class="diag-group">
-                            <h4 class="diag-cat-title cat-severe"><i class="fa-solid fa-radiation"></i> Diagnostics Graves (-6 points)</h4>
-                            <div class="diag-options" id="diag-severe-options"></div>
-                        </div>
-
-                        <div class="form-group margin-top-md">
-                            <label for="malus-justification">Justification Obligatoire des Malus retenus :</label>
-                            <textarea id="malus-justification" rows="3" placeholder="Expliquez la présence des symptômes et l'impact constaté lors des exercices ou de l'entretien..."></textarea>
-                        </div>
-
-                        <div class="malus-total-badge">
-                            Total Malus Standard : <span id="total-malus-display" class="highlight-neg">0 points</span>
-                        </div>
-                    </div>
-
-                    <!-- SECTION 5: BONUS -->
-                    <div class="card card-glass">
-                        <div class="card-title text-success">
-                            <i class="fa-solid fa-award"></i> 5. Bonus Cliniques (Facultatifs)
-                        </div>
-                        <p class="section-desc">
-                            Comportements exceptionnels observés en situation de haute contrainte. Maximum appliqué : <strong>+4 points</strong>.
-                        </p>
-
-                        <div class="bonus-options-list" id="bonus-options"></div>
-
-                        <div class="form-group margin-top-md">
-                            <label for="bonus-justification">Justification des Bonus appliqués :</label>
-                            <textarea id="bonus-justification" rows="3" placeholder="Précisez les actes ou démonstrations de résilience/leadership exceptionnels..."></textarea>
-                        </div>
-
-                        <div class="bonus-total-badge">
-                            Total Bonus Standard : <span id="total-bonus-display" class="highlight-pos">+0 points</span> (Max +2 pts)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SECTION "AUTRE" : AJUSTEMENT DE POINTS EN PLUS OU EN MOINS SUR-MESURE -->
-                <div class="card card-glass margin-top-md" style="border: 2px dashed var(--sand-primary);">
-                    <div class="card-title" style="color: var(--sand-primary);">
-                        <i class="fa-solid fa-circle-plus"></i> <i class="fa-solid fa-circle-minus"></i> 
-                        Ajustements Personnalisés ("Autre" — Ajouter ou Enlever des points librement)
-                    </div>
-                    <p class="section-desc">
-                        Saisissez un motif spécifique et choisissez d'attribuer un bonus supplémentaire (+ points) ou de déduire un malus supplémentaire (- points) non répertorié ci-dessus.
-                    </p>
-
-                    <div class="custom-adjustment-form form-grid" style="margin-top: 14px;">
-                        <div class="form-group">
-                            <label for="custom-adj-label">Motif / Description de l'ajustement "Autre"</label>
-                            <input type="text" id="custom-adj-label" placeholder="Ex: Action d'éclat imprévue / Désobéissance mineure au refuge">
-                        </div>
-                        <div class="form-group">
-                            <label for="custom-adj-type">Action sur le barème</label>
-                            <select id="custom-adj-type">
-                                <option value="add">Ajouter des points (+) [Bonus personnalisé]</option>
-                                <option value="sub">Enlever des points (-) [Malus personnalisé]</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="custom-adj-pts">Nombre de points à appliquer</label>
-                            <input type="number" id="custom-adj-pts" min="1" max="20" value="2">
-                        </div>
-                        <div class="form-group" style="display: flex; align-items: flex-end;">
-                            <button type="button" class="btn btn-primary" id="btn-add-custom-adjustment" style="width: 100%; justify-content: center;">
-                                <i class="fa-solid fa-plus-minus"></i> Valider l'Ajustement "Autre"
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Active Custom Adjustments List -->
-                    <div class="custom-adj-list margin-top-md" id="custom-adjustments-list">
-                        <!-- Dynamic list of added custom adjustments -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 5: CALCUL & SYNTHÈSE -->
+            <!-- TAB 4: CALCUL & SYNTHÈSE -->
             <section id="tab-resultats" class="tab-pane">
                 <div class="pane-header">
-                    <h2><i class="fa-solid fa-square-poll-vertical"></i> 6 & 7. Calcul du Score Final & Décision Finale</h2>
+                    <h2><i class="fa-solid fa-square-poll-vertical"></i> 4. Calcul du Score Final & Décision Finale</h2>
                     <p>Synthèse algorithmique de l'évaluation clinique conformément au référentiel officiel SEIMEI - SUNA.</p>
                 </div>
 
@@ -452,18 +319,6 @@
                                 <span>+/- Première impression clinique</span>
                                 <strong id="breakdown-impression-val">+0 pt</strong>
                             </div>
-                            <div class="math-row text-success">
-                                <span>+ Bonus cliniques (max +2)</span>
-                                <strong id="breakdown-bonus-val">+0 pts</strong>
-                            </div>
-                            <div class="math-row text-danger">
-                                <span>- Malus Diagnostics Standard</span>
-                                <strong id="breakdown-malus-val">-0 pts</strong>
-                            </div>
-                            <div class="math-row" style="color: var(--sand-primary);">
-                                <span>+/- Ajustements "Autre"</span>
-                                <strong id="breakdown-custom-val">0 pts</strong>
-                            </div>
                             <div class="math-row math-total">
                                 <span>= SCORE FINAL SEIMEI</span>
                                 <strong id="breakdown-total-val">0 / 52</strong>
@@ -471,9 +326,9 @@
                         </div>
                     </div>
 
-                    <!-- Decision Outcome Card (Section 7) -->
+                    <!-- Decision Outcome Card -->
                     <div class="card card-glass decision-display-card" id="decision-card">
-                        <div class="card-title"><i class="fa-solid fa-gavel"></i> 7. Décision Finale Clinique</div>
+                        <div class="card-title"><i class="fa-solid fa-gavel"></i> Décision Finale Clinique</div>
 
                         <div class="decision-badge-container">
                             <div class="decision-status-badge" id="decision-badge">SEUILLAGE EN COURS...</div>
@@ -517,10 +372,10 @@
                 </div>
             </section>
 
-            <!-- TAB 6: RAPPORT CLINIQUE & DOUBLE VUE -->
+            <!-- TAB 5: RAPPORT CLINIQUE & DOUBLE VUE -->
             <section id="tab-rapport" class="tab-pane">
                 <div class="pane-header">
-                    <h2><i class="fa-solid fa-print"></i> 8, 9 & 10. Générateur de Rapports & Vues Différenciées</h2>
+                    <h2><i class="fa-solid fa-print"></i> Générateur de Rapports & Vues Différenciées</h2>
                     <p>Basculez entre le rapport confidentiel réservé au corps médical et la fiche épurée destinée au Shinobi.</p>
                 </div>
 
@@ -548,7 +403,7 @@
                 <div class="printable-document-wrapper" id="printable-report"></div>
             </section>
 
-            <!-- TAB 7: HISTORIQUE DES EVALUATIONS -->
+            <!-- TAB 6: HISTORIQUE DES EVALUATIONS -->
             <!-- TAB: HISTORIQUE PATIENTS (base partagée entre psychologues) -->
             <section id="tab-patients" class="tab-pane">
                 <div class="pane-header">
@@ -650,9 +505,6 @@
             </div>
         </footer>
         </div>
-    </div>
-    </div>
-    </div>
     </div>
 
     <!-- Dossier Detail Modal -->

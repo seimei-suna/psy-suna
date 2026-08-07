@@ -21,8 +21,7 @@ function unifyTestRow(r) {
             statutClass: '',
             score: `${r.score_final} / ${BAREME.MAX_TOTAL}`,
             motif: null,
-            resultat: null,
-            piece_jointe_url: null
+            resultat: null
         };
     }
     return {
@@ -37,8 +36,7 @@ function unifyTestRow(r) {
         statutClass: TEST_STATUT_CLASS[r.statut] || '',
         score: null,
         motif: r.motif,
-        resultat: r.resultat,
-        piece_jointe_url: r.piece_jointe_url
+        resultat: r.resultat
     };
 }
 
@@ -146,7 +144,6 @@ function openTestDetail(id, source) {
             <p class="detail-text">${escapeHtml(r.motif || 'Non renseigné')}</p>
             <h4 class="detail-title">Résultat / conclusion</h4>
             <p class="detail-text">${escapeHtml(r.resultat || 'Non renseigné')}</p>
-            ${r.piece_jointe_url ? `<h4 class="detail-title">Pièce jointe</h4><p class="detail-text"><a href="${escapeHtml(r.piece_jointe_url)}" target="_blank" rel="noopener" style="color: var(--sand-primary);">${escapeHtml(r.piece_jointe_url)}</a></p>` : ''}
         `;
     }
     document.getElementById('test-modal').classList.add('open');
@@ -186,8 +183,7 @@ function initNewTestModal() {
                 psy_nom: user ? `${user.prenom} ${user.nom}` : null,
                 motif: document.getElementById('new-test-motif').value.trim() || null,
                 resultat: document.getElementById('new-test-resultat').value.trim() || null,
-                statut: document.getElementById('new-test-statut').value,
-                piece_jointe_url: document.getElementById('new-test-piece').value.trim() || null
+                statut: document.getElementById('new-test-statut').value
             };
             const res = await sb.from('psy_tests').insert([row]);
             if (res.error) throw new Error(res.error.message);
@@ -196,7 +192,6 @@ function initNewTestModal() {
             document.getElementById('new-test-patient').value = '';
             document.getElementById('new-test-motif').value = '';
             document.getElementById('new-test-resultat').value = '';
-            document.getElementById('new-test-piece').value = '';
             await Promise.all([loadTests(), loadPatientsList()]);
         } catch (e) {
             errEl.textContent = e.message;

@@ -1,12 +1,17 @@
 /* ==========================================================================
    SEIMEI - SUNA : gerance.js — Membres de la branche & suivi d'activité
-   L'activité (qui a fait quoi, quel jour) n'est JAMAIS saisie ici : elle
-   est uniquement lue depuis psy_activity_log, alimentée automatiquement
-   par les triggers Postgres (voir SQL_psy_v2.sql). Cette page ne fait
-   qu'agréger et afficher.
+   La fiche d'un membre (activité jour par jour) est une vraie page,
+   accessible via gerance.html?membre=<id> — navigation réelle (URL,
+   bouton retour du navigateur), pas un panneau qui s'affiche en JS.
+   L'activité n'est jamais saisie ici : elle est uniquement lue depuis
+   psy_activity_log, alimentée automatiquement par les triggers Postgres.
    ========================================================================== */
 
 let geranceState = { membres: [], currentMembre: null, activity: [] };
+
+function getMembreIdFromUrl() {
+    return new URLSearchParams(location.search).get('membre');
+}
 
 async function loadMembres() {
     if (!sb) return;
@@ -20,23 +25,23 @@ async function loadMembres() {
     }
 }
 
-function membreCardHtml(m) {
+function membreRowHtml(m) {
     return `
-        <div class="membre-card" data-id="${m.id}">
-            <div class="membre-card-info">
-                <div class="membre-card-name">${escapeHtml(m.prenom)} ${escapeHtml(m.nom)}</div>
-                <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                    <span class="psy-sidebar-user-role role-badge-${m.role}">${ROLE_LABELS[m.role] || m.role}</span>
+        <div class="membre-row" data-id="${m.id}">
+            <div class="membre-row-info">
+                <span class="membre-row-name">${escapeHtml(m.prenom)} ${escapeHtml(m.nom)}</span>
+                <div class="membre-row-tags">
+                    <span class="role-badge-${m.role}">${ROLE_LABELS[m.role] || m.role}</span>
                     <span class="categorie-badge">${CATEGORIE_LABELS[m.categorie] || m.categorie}</span>
-                    <span class="psy-sidebar-user-role" style="background:rgba(255,255,255,.06); color:var(--text-secondary); border:1px solid var(--border-color);">${STATUT_MEMBRE_LABELS[m.statut] || m.statut}</span>
+                    <span class="categorie-badge">${STATUT_MEMBRE_LABELS[m.statut] || m.statut}</span>
                 </div>
             </div>
-            <div class="membre-card-actions">
+            <div class="membre-row-actions">
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="psychologue" title="Psychologue">Psy</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="gerance_psy" title="Gérance Branche Psy">Gérance</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="seimei" title="Seimei">Seimei</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-cat-btn" data-id="${m.id}" data-cat="${m.categorie === 'seimei_medical_psy' ? 'branche_psy_uniquement' : 'seimei_medical_psy'}" title="Basculer la catégorie">
-                    <i class="fa-solid fa-repeat"></i> Catégorie
+                    <i class="fa-solid fa-repeat"></i>
                 </button>
                 ${m.statut === 'actif'
                     ? `<button type="button" class="btn btn-danger btn-sm mc-statut-btn" data-id="${m.id}" data-statut="inactif">Désactiver</button>`
@@ -47,23 +52,26 @@ function membreCardHtml(m) {
 }
 
 function renderMembres() {
-    const enAttente = geranceState.membres.filter(m => m.statut === 'en_attente');
-    const seimei = geranceState.membres.filter(m => m.statut !== 'en_attente' && m.categorie === 'seimei_medical_psy');
-    const branche = geranceState.membres.filter(m => m.statut !== 'en_attente' && m.categorie === 'branche_psy_uniquement');
+    const q = (document.getElementById('gerance-search').value || '').trim().toLowerCase();
+    const matches = m => !q || `${m.prenom} ${m.nom}`.toLowerCase().includes(q);
+
+    const enAttente = geranceState.membres.filter(m => m.statut === 'en_attente' && matches(m));
+    const seimei = geranceState.membres.filter(m => m.statut !== 'en_attente' && m.categorie === 'seimei_medical_psy' && matches(m));
+    const branche = geranceState.membres.filter(m => m.statut !== 'en_attente' && m.categorie === 'branche_psy_uniquement' && matches(m));
 
     document.getElementById('gerance-en-attente-card').classList.toggle('hidden', enAttente.length === 0);
-    document.getElementById('gerance-en-attente-list').innerHTML = enAttente.map(membreCardHtml).join('');
-    document.getElementById('gerance-groupe-seimei').innerHTML = seimei.map(membreCardHtml).join('') || '<div class="dossiers-empty">Aucun membre.</div>';
-    document.getElementById('gerance-groupe-branche').innerHTML = branche.map(membreCardHtml).join('') || '<div class="dossiers-empty">Aucun membre.</div>';
+    document.getElementById('gerance-en-attente-list').innerHTML = enAttente.map(membreRowHtml).join('');
+    document.getElementById('gerance-groupe-seimei').innerHTML = seimei.map(membreRowHtml).join('') || '<div class="dossiers-empty">Aucun membre.</div>';
+    document.getElementById('gerance-groupe-branche').innerHTML = branche.map(membreRowHtml).join('') || '<div class="dossiers-empty">Aucun membre.</div>';
 
-    bindMembreCardEvents();
+    bindMembreRowEvents();
 }
 
-function bindMembreCardEvents() {
-    document.querySelectorAll('.membre-card').forEach(card => {
-        card.addEventListener('click', (e) => {
+function bindMembreRowEvents() {
+    document.querySelectorAll('.membre-row').forEach(row => {
+        row.addEventListener('click', (e) => {
             if (e.target.closest('button')) return;
-            openMemberActivity(card.dataset.id);
+            location.href = 'gerance.html?membre=' + encodeURIComponent(row.dataset.id);
         });
     });
     document.querySelectorAll('.mc-role-btn').forEach(btn => {
@@ -87,23 +95,25 @@ async function updateMembreField(id, patch) {
     }
 }
 
-function switchToMembresView() {
-    document.getElementById('gerance-detail-view').classList.remove('active');
-    document.getElementById('gerance-list-view').classList.add('active');
-    geranceState.currentMembre = null;
-}
+// --- Vue fiche membre (gerance.html?membre=ID) ---
 
-async function openMemberActivity(id) {
-    const m = geranceState.membres.find(x => String(x.id) === String(id));
-    if (!m) return;
-    geranceState.currentMembre = m;
-
+async function loadMembreDetail(id) {
     document.getElementById('gerance-list-view').classList.remove('active');
     document.getElementById('gerance-detail-view').classList.add('active');
 
+    try {
+        const res = await sb.from('psy_membres').select('*').eq('id', id).single();
+        if (res.error) throw new Error(res.error.message);
+        geranceState.currentMembre = res.data;
+    } catch (e) {
+        document.getElementById('gerance-detail-name').textContent = 'Membre introuvable';
+        return;
+    }
+
+    const m = geranceState.currentMembre;
     document.getElementById('gerance-detail-name').textContent = `${m.prenom} ${m.nom}`;
     document.getElementById('gerance-detail-badges').innerHTML = `
-        <span class="psy-sidebar-user-role role-badge-${m.role}">${ROLE_LABELS[m.role] || m.role}</span>
+        <span class="role-badge-${m.role}">${ROLE_LABELS[m.role] || m.role}</span>
         <span class="categorie-badge" style="margin-left:6px;">${CATEGORIE_LABELS[m.categorie] || m.categorie}</span>
     `;
 
@@ -180,9 +190,17 @@ function renderActivity() {
 document.addEventListener('DOMContentLoaded', () => {
     requireAuth((user) => {
         if (!requireRole(user, ['gerance_psy', 'seimei'])) return;
-        loadMembres();
+
+        const membreId = getMembreIdFromUrl();
+        if (membreId) {
+            loadMembreDetail(membreId);
+        } else {
+            document.getElementById('gerance-list-view').classList.add('active');
+            loadMembres();
+        }
     });
 
-    document.getElementById('btn-back-to-membres').addEventListener('click', switchToMembresView);
+    document.getElementById('gerance-search').addEventListener('input', renderMembres);
+    document.getElementById('gerance-search-btn').addEventListener('click', renderMembres);
     document.getElementById('gerance-activity-period').addEventListener('change', loadActivity);
 });

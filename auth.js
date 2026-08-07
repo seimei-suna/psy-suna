@@ -175,7 +175,7 @@ function showApp(user) {
   const app = document.getElementById('psy-app');
   if (gate) gate.classList.add('hidden');
   if (app) app.classList.remove('hidden');
-  renderSidebar(document.body.getAttribute('data-page') || '');
+  renderTopbar(document.body.getAttribute('data-page') || '');
 }
 
 // Callback surchargeable par chaque page pour lancer son propre chargement

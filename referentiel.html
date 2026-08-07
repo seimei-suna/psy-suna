@@ -18,33 +18,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="referentiel">
-    <div class="psy-shell">
-    <aside id="psy-sidebar" class="psy-sidebar"></aside>
-    <div class="psy-shell-main">
+    <div id="psy-topbar"></div>
     <div class="app-container">
-        <!-- Top Institutional Header -->
-        <header class="main-header" id="header">
-            <div class="header-emblem left">
-                <svg viewBox="0 0 100 100" class="emblem-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
-                </svg>
-            </div>
-
-            <div class="header-titles">
-                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
-                <h1 class="header-main-title">SEIMEI – SUNA</h1>
-                <h2 class="header-sub-title">RÉFÉRENTIEL EN VIGUEUR — CONSULTATION GÉRANCE</h2>
-                <div class="header-subtitle-tag">LECTURE SEULE — REFLÈTE LE BARÈME ACTUELLEMENT APPLIQUÉ</div>
-            </div>
-
-            <div class="header-emblem right">
-                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
-                <span class="emblem-tag">SEIMEI 葉</span>
-            </div>
-        </header>
-
         <!-- Accès réservé : vrai compte individuel (voir auth.js) -->
         <div id="psy-auth-gate"></div>
 
@@ -53,14 +28,15 @@
 
             <section class="tab-pane active">
                 <div class="pane-header">
+                    <span class="eyebrow">Lecture seule — reflète le barème actuellement appliqué</span>
                     <h2><i class="fa-solid fa-diagram-project"></i> Déroulé du dispositif</h2>
                     <p>Ce document reflète en permanence le référentiel réellement utilisé par les outils psychologiques (aucune saisie manuelle : les données proviennent directement du même fichier partagé).</p>
                 </div>
-                <div class="card card-glass">
+                <div class="card">
                     <ol style="line-height: 2; color: var(--sand-light); padding-left: 20px;">
                         <li><strong>Tri initial</strong> — le shinobi remplit seul un auto-test (identité, 8 critères, 3 mises en situation). Il ne voit jamais son score, seulement une recommandation.</li>
                         <li><strong>Repérage</strong> — les psychologues consultent les résultats des auto-tests. Si le score ne pose pas de problème, rien de plus n'est fait.</li>
-                        <li><strong>Rappel & entretien oral</strong> — en cas de score préoccupant, le psychologue rappelle le patient pour un second entretien, cette fois mené oralement et noté par le psychologue lui-même (avec première impression, bonus et diagnostics/malus cliniques en plus des critères et mises en situation).</li>
+                        <li><strong>Rappel & entretien oral</strong> — en cas de score préoccupant, le psychologue rappelle le patient pour un second entretien, cette fois mené oralement et noté par le psychologue lui-même (avec première impression en plus des critères et mises en situation).</li>
                         <li><strong>Décision</strong> — le score final (sur 52 points en entretien complet) détermine la décision selon le même tableau qu'en auto-test.</li>
                     </ol>
                 </div>
@@ -78,7 +54,7 @@
                 <div class="pane-header">
                     <h2><i class="fa-solid fa-ranking-star"></i> Échelle de notation par critère</h2>
                 </div>
-                <div class="card card-glass">
+                <div class="card">
                     <ul class="detail-list" id="ref-levels-list"></ul>
                 </div>
             </section>
@@ -88,25 +64,8 @@
                     <h2><i class="fa-solid fa-dice-d20"></i> Mises en situation</h2>
                     <p>3 mises en situation tirées aléatoirement à chaque test, notées de 0 à 3 points chacune — 9 points maximum. Banque actuelle répartie en 4 catégories.</p>
                 </div>
-                <div class="card card-glass">
+                <div class="card">
                     <ul class="detail-list" id="ref-scenario-categories"></ul>
-                </div>
-            </section>
-
-            <section class="tab-pane active">
-                <div class="pane-header">
-                    <h2><i class="fa-solid fa-sliders"></i> Diagnostics (malus) & bonus cliniques</h2>
-                    <p>Réservés à l'entretien oral mené par un psychologue — non applicables en auto-test.</p>
-                </div>
-                <div class="grid-2col">
-                    <div class="card card-glass">
-                        <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> Diagnostics (malus cumulables)</div>
-                        <ul class="detail-list" id="ref-malus-list"></ul>
-                    </div>
-                    <div class="card card-glass">
-                        <div class="card-title"><i class="fa-solid fa-star"></i> Bonus cliniques (plafonnés à +2)</div>
-                        <ul class="detail-list" id="ref-bonus-list"></ul>
-                    </div>
                 </div>
             </section>
 
@@ -125,8 +84,6 @@
             <a href="auto-test.html"><i class="fa-solid fa-clipboard-user"></i> Auto-test patient</a>
         </div>
         </div>
-    </div>
-    </div>
     </div>
 
     <script src="supabase.js"></script>

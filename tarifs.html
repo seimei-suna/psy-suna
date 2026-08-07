@@ -13,38 +13,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="tarifs">
-    <div class="psy-shell">
-    <aside id="psy-sidebar" class="psy-sidebar"></aside>
-    <div class="psy-shell-main">
+    <div id="psy-topbar"></div>
     <div class="app-container">
-        <header class="main-header" id="header">
-            <div class="header-emblem left">
-                <svg viewBox="0 0 100 100" class="emblem-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
-                </svg>
-            </div>
-            <div class="header-titles">
-                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
-                <h1 class="header-main-title">TARIFS</h1>
-                <h2 class="header-sub-title">CONSULTATIONS, SUIVI & TESTS PSYCHOLOGIQUES</h2>
-                <div class="header-subtitle-tag">BRANCHE PSYCHOLOGIQUE SEIMEI — CONSULTATION LIBRE</div>
-            </div>
-            <div class="header-emblem right">
-                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
-                <span class="emblem-tag">SEIMEI 葉</span>
-            </div>
-        </header>
-
         <main class="content-area">
             <section class="tab-pane active">
                 <div class="pane-header">
+                    <span class="eyebrow">Branche Psychologique Seimei — Consultation libre</span>
                     <h2><i class="fa-solid fa-coins"></i> Tableau des tarifs</h2>
                     <p>Consultable par tous, y compris les patients. Édition réservée à la Gérance / Seimei.</p>
                 </div>
 
-                <div class="card card-glass hidden" id="tarifs-edit-card">
+                <div class="card hidden" id="tarifs-edit-card">
                     <div class="card-title"><i class="fa-solid fa-plus"></i> Ajouter une ligne</div>
                     <div class="form-grid">
                         <div class="form-group">
@@ -61,7 +40,7 @@
                     </button>
                 </div>
 
-                <div class="card card-glass">
+                <div class="card">
                     <table class="tarifs-table" id="tarifs-table">
                         <thead><tr><th>Prestation</th><th>Tarif</th><th></th></tr></thead>
                         <tbody id="tarifs-body"></tbody>
@@ -70,8 +49,6 @@
                 </div>
             </section>
         </main>
-    </div>
-    </div>
     </div>
 
     <script src="supabase.js"></script>

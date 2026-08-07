@@ -356,20 +356,13 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('bareme-progress').style.width = `${(scores.criteriaTotal / 40) * 100}%`;
         document.getElementById('bareme-status-text').textContent = scores.criteriaTotal >= 30 ? "Évaluation solide" : "Point d'attention clinique";
 
-        // Update Tab 4 totals
-        document.getElementById('total-malus-display').textContent = `-${scores.malusTotal} points`;
-        document.getElementById('total-bonus-display').textContent = `+${scores.bonusTotal} points`;
-
-        // Update Tab 5 score circle & breakdown
+        // Score circle & breakdown
         document.getElementById('final-score-val').textContent = scores.finalScore;
         document.getElementById('breakdown-crit-val').textContent = `${scores.criteriaTotal} / ${BAREME.MAX_CRITERIA} pts`;
         const scEl = document.getElementById('breakdown-scenarios-val');
         if (scEl) scEl.textContent = `+${scores.scenariosTotal} / ${BAREME.MAX_SCENARIOS} pts`;
         const impEl = document.getElementById('breakdown-impression-val');
         if (impEl) impEl.textContent = `${scores.impressionTotal >= 0 ? '+' : ''}${scores.impressionTotal} pt`;
-        document.getElementById('breakdown-bonus-val').textContent = `+${scores.bonusTotal} pts`;
-        document.getElementById('breakdown-malus-val').textContent = `-${scores.malusTotal} pts`;
-        document.getElementById('breakdown-custom-val').textContent = `${scores.customAdjustmentsTotal >= 0 ? '+' : ''}${scores.customAdjustmentsTotal} pts`;
         document.getElementById('breakdown-total-val').textContent = `${scores.finalScore} / ${BAREME.MAX_TOTAL}`;
 
         // Update decision card
@@ -824,38 +817,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add Custom Adjustment Button Event ("Autre")
-    document.getElementById('btn-add-custom-adjustment').addEventListener('click', () => {
-        const labelInput = document.getElementById('custom-adj-label');
-        const typeSelect = document.getElementById('custom-adj-type');
-        const ptsInput = document.getElementById('custom-adj-pts');
-
-        const label = labelInput.value.trim();
-        const type = typeSelect.value;
-        const pts = Math.abs(parseInt(ptsInput.value) || 0);
-
-        if (!label) {
-            alert("Veuillez saisir un motif pour l'ajustement 'Autre'.");
-            return;
-        }
-
-        if (pts <= 0) {
-            alert("Le nombre de points doit être supérieur à 0.");
-            return;
-        }
-
-        appState.customAdjustments.push({
-            id: 'adj-' + Date.now(),
-            label: label,
-            type: type,
-            pts: pts
-        });
-
-        labelInput.value = '';
-        renderCustomAdjustmentsList();
-        updateCalculations();
-    });
-
     // Filter scenarios listener
     const filterSelect = document.getElementById('filter-scenario-cat');
     if (filterSelect) {
@@ -929,18 +890,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             }).join('');
 
-            const selectedMalusItems = [...MALUS_DATA.light, ...MALUS_DATA.moderate, ...MALUS_DATA.severe]
-                .filter(m => appState.selectedMalus.includes(m.id))
-                .map(m => `${m.label} (-${m.pts} pts)`).join(', ') || 'Aucun malus retenu';
-
-            const selectedBonusItems = BONUS_DATA
-                .filter(b => appState.selectedBonus.includes(b.id))
-                .map(b => `${b.label} (+${b.pts} pts)`).join(', ') || 'Aucun bonus appliqué';
-
-            const customAdjustmentsText = appState.customAdjustments.length > 0
-                ? appState.customAdjustments.map(a => `${a.label} (${a.type === 'add' ? '+' : '-'}${a.pts} pts)`).join(', ')
-                : 'Aucun ajustement "Autre"';
-
             reportContainer.innerHTML = `
                 <div class="doc-header">
                     <div>
@@ -983,18 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="doc-section">
-                    <div class="doc-section-title">3. DIAGNOSTICS, BONUS & AJUSTEMENTS "AUTRE"</div>
-                    <p><strong>Diagnostics retenus (Malus Standard: -${scores.malusTotal} pts) :</strong> ${selectedMalusItems}</p>
-                    <p style="font-size: 13px; color: #444; margin-top: 2px;"><em>Justification :</em> ${appState.malusJustification || 'Aucune justification enregistrée.'}</p>
-                    <br>
-                    <p><strong>Bonus de mérite (Bonus Standard: +${scores.bonusTotal} pts max) :</strong> ${selectedBonusItems}</p>
-                    <p style="font-size: 13px; color: #444; margin-top: 2px;"><em>Justification :</em> ${appState.bonusJustification || 'Aucune justification enregistrée.'}</p>
-                    <br>
-                    <p><strong>Ajustements "Autre" Sur-Mesure (${scores.customAdjustmentsTotal >= 0 ? '+' : ''}${scores.customAdjustmentsTotal} pts) :</strong> ${customAdjustmentsText}</p>
-                </div>
-
-                <div class="doc-section">
-                    <div class="doc-section-title">4. DÉCISION FINALE & RECOMMANDATIONS CLINIQUES</div>
+                    <div class="doc-section-title">3. DÉCISION FINALE & RECOMMANDATIONS CLINIQUES</div>
                     <div style="background: #e9decb; border-left: 4px solid #3d0c11; padding: 12px 16px; margin-top: 6px;">
                         <h4 style="font-size: 16px; color: #3d0c11;">${scores.decision.title} (Score: ${scores.finalScore} / ${BAREME.MAX_TOTAL})</h4>
                         <p style="font-size: 13px; margin-top: 4px;">${scores.decision.description}</p>
@@ -1055,16 +993,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ['patient-name', 'patient-unit', 'patient-grade', 'patient-age', 'patient-gender', 'eval-date', 'evaluator-name'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', updatePatientStateFromInputs);
-    });
-
-    // Textareas justification
-    document.getElementById('malus-justification').addEventListener('input', (e) => {
-        appState.malusJustification = e.target.value;
-        renderPrintableReport();
-    });
-    document.getElementById('bonus-justification').addEventListener('input', (e) => {
-        appState.bonusJustification = e.target.value;
-        renderPrintableReport();
     });
 
     // Scenario Generator Button

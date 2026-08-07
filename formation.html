@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SEIMEI - SUNA | Formation & Communications</title>
-    <meta name="description" content="Formation des psychologues et communications internes restreintes de la branche psychologique SEIMEI - SUNA.">
+    <title>SEIMEI - SUNA | Formation</title>
+    <meta name="description" content="Formation des psychologues de la branche psychologique SEIMEI - SUNA.">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,30 +13,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="formation">
-    <div class="psy-shell">
-    <aside id="psy-sidebar" class="psy-sidebar"></aside>
-    <div class="psy-shell-main">
+    <div id="psy-topbar"></div>
     <div class="app-container">
-        <header class="main-header" id="header">
-            <div class="header-emblem left">
-                <svg viewBox="0 0 100 100" class="emblem-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
-                </svg>
-            </div>
-            <div class="header-titles">
-                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
-                <h1 class="header-main-title">FORMATION & COMMUNICATIONS</h1>
-                <h2 class="header-sub-title">RESSOURCES DES NOUVEAUX PSYCHOLOGUES</h2>
-                <div class="header-subtitle-tag">BRANCHE PSYCHOLOGIQUE SEIMEI</div>
-            </div>
-            <div class="header-emblem right">
-                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
-                <span class="emblem-tag">SEIMEI 葉</span>
-            </div>
-        </header>
-
         <div id="psy-auth-gate"></div>
 
         <div id="psy-app" class="hidden">
@@ -44,52 +22,12 @@
 
             <section class="tab-pane active">
                 <div class="pane-header">
-                    <h2><i class="fa-solid fa-bullhorn"></i> Communications internes</h2>
-                    <p>Fil réservé à la branche psychologique. Seules la Gérance de la branche et la Seimei peuvent publier ; tous les psychologues actifs peuvent lire.</p>
-                </div>
-
-                <div class="card card-glass" id="comm-publish-card">
-                    <div class="card-title"><i class="fa-solid fa-pen"></i> Publier une communication</div>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label for="comm-titre">Titre</label>
-                            <input type="text" id="comm-titre" placeholder="Ex: Rappel de procédure — entretiens oraux">
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="comm-contenu">Contenu</label>
-                            <textarea id="comm-contenu" rows="4"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label class="check-container" style="margin-top:8px;">
-                                <input type="checkbox" id="comm-epingle">
-                                <span class="checkmark"></span>
-                                <span class="check-text">Épingler en haut du fil</span>
-                            </label>
-                        </div>
-                        <div class="form-group">
-                            <label for="comm-sceau">Confirmez votre mot de passe</label>
-                            <input type="password" id="comm-sceau" autocomplete="current-password" placeholder="Requis pour publier">
-                        </div>
-                    </div>
-                    <p style="font-size:12px; color: var(--sand-dim); margin-top:6px;">
-                        <i class="fa-solid fa-shield-halved"></i> Vérification serveur du rôle à chaque publication — la seule action du site réellement infalsifiable, même par quelqu'un modifiant le code local.
-                    </p>
-                    <p id="comm-error" style="color:#e74c3c; font-size:13px; margin-top:6px;"></p>
-                    <button type="button" class="btn btn-primary" id="btn-publish-comm" style="margin-top:10px;">
-                        <i class="fa-solid fa-paper-plane"></i> Publier
-                    </button>
-                </div>
-
-                <div id="comm-list" style="margin-top:18px;"></div>
-            </section>
-
-            <section class="tab-pane active">
-                <div class="pane-header">
+                    <span class="eyebrow">Branche Psychologique Seimei</span>
                     <h2><i class="fa-solid fa-graduation-cap"></i> Formation des nouveaux psychologues</h2>
                     <p>Ressources, exemples et grilles d'évaluation clinique. Édition réservée à la Gérance / Seimei.</p>
                 </div>
 
-                <div class="card card-glass" id="formation-edit-card">
+                <div class="card hidden" id="formation-edit-card">
                     <div class="card-title"><i class="fa-solid fa-plus"></i> Ajouter une ressource</div>
                     <div class="form-grid">
                         <div class="form-group full-width">
@@ -111,8 +49,6 @@
 
         </main>
         </div>
-    </div>
-    </div>
     </div>
 
     <script src="supabase.js"></script>

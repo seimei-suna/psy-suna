@@ -43,17 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('') + `<li><span>Total de la banque</span><strong>${SCENARIOS_BANK.length} scénario(s)</strong></li>`
         : '<li><em>Aucun scénario chargé</em></li>';
 
-    // ── Malus ──
-    const malusList = [...MALUS_DATA.light, ...MALUS_DATA.moderate, ...MALUS_DATA.severe];
-    document.getElementById('ref-malus-list').innerHTML = malusList.map(m => `
-        <li><span>${m.label}</span><strong>-${m.pts} pts</strong></li>
-    `).join('');
-
-    // ── Bonus ──
-    document.getElementById('ref-bonus-list').innerHTML = BONUS_DATA.map(b => `
-        <li><span>${b.label} <em style="color: var(--sand-dim);">— ${b.desc}</em></span><strong>+${b.pts} pt</strong></li>
-    `).join('');
-
     // ── Tableau de décision ──
     document.getElementById('ref-decisions-container').innerHTML = DECISIONS.map(d => `
         <div class="dossier-card" style="margin-bottom: 12px;">

@@ -13,30 +13,8 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body data-page="suivis">
-    <div class="psy-shell">
-    <aside id="psy-sidebar" class="psy-sidebar"></aside>
-    <div class="psy-shell-main">
+    <div id="psy-topbar"></div>
     <div class="app-container">
-        <header class="main-header" id="header">
-            <div class="header-emblem left">
-                <svg viewBox="0 0 100 100" class="emblem-svg">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="3"/>
-                    <path d="M50 15 C 30 35, 30 65, 50 85 C 70 65, 70 35, 50 15 Z" fill="currentColor"/>
-                    <circle cx="50" cy="50" r="12" fill="#14090c"/>
-                </svg>
-            </div>
-            <div class="header-titles">
-                <div class="badge-institutional">SYSTÈME CLINIQUE SHINOBI — SUNAGAKURE</div>
-                <h1 class="header-main-title">SUIVI PSYCHOLOGIQUE</h1>
-                <h2 class="header-sub-title">ACTIFS • EN PAUSE • CLÔTURÉS</h2>
-                <div class="header-subtitle-tag">BRANCHE PSYCHOLOGIQUE SEIMEI</div>
-            </div>
-            <div class="header-emblem right">
-                <i class="fa-solid fa-staff-snake medical-caduceus"></i>
-                <span class="emblem-tag">SEIMEI 葉</span>
-            </div>
-        </header>
-
         <div id="psy-auth-gate"></div>
 
         <div id="psy-app" class="hidden">
@@ -45,6 +23,7 @@
             <!-- VUE LISTE -->
             <section class="tab-pane active" id="suivis-list-view">
                 <div class="pane-header">
+                    <span class="eyebrow">Branche Psychologique Seimei</span>
                     <h2><i class="fa-solid fa-heart-pulse"></i> Suivi Psychologique</h2>
                     <p>Tous les patients en suivi, avec leur statut — façon "badgeuse". Cliquez sur un patient pour ouvrir sa fiche complète et ses rapports de séance.</p>
                 </div>
@@ -104,8 +83,6 @@
 
         </main>
         </div>
-    </div>
-    </div>
     </div>
 
     <!-- Modal : nouveau statut (motif) -->
