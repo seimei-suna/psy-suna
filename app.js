@@ -967,10 +967,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const STEP_LABELS = { 1: 'Étape 1 / 5 — Patient & Entretien', 2: 'Étape 2 / 5 — Mises en Situation', 3: 'Étape 3 / 5 — Barème Clinique', 4: 'Étape 4 / 5 — Calcul & Synthèse', 5: 'Étape 5 / 5 — Rapport & Vues' };
 
     function switchToTab(tabTarget) {
-        const btn = document.querySelector(`.nav-btn[data-tab="${tabTarget}"]`);
+        // Plusieurs boutons peuvent cibler le même onglet (ex. le bouton
+        // "Évaluation" et le bouton d'étape 1, tous deux vers tab-patient).
+        const matchingBtns = document.querySelectorAll(`.nav-btn[data-tab="${tabTarget}"]`);
+        const btn = document.querySelector(`.nav-btn[data-tab="${tabTarget}"][data-step]`) || matchingBtns[0];
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        if (btn) btn.classList.add('active');
+        matchingBtns.forEach(b => b.classList.add('active'));
         const targetPane = document.getElementById(tabTarget);
         if (targetPane) targetPane.classList.add('active');
 
@@ -1009,6 +1012,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const nextBtn = document.querySelector(`.nav-btn[data-step="${step + 1}"]`);
             if (nextBtn) switchToTab(nextBtn.getAttribute('data-tab'));
         }
+    });
+    document.getElementById('btn-step-start').addEventListener('click', () => {
+        const firstBtn = document.querySelector('.nav-btn[data-step="1"]');
+        if (firstBtn) switchToTab(firstBtn.getAttribute('data-tab'));
     });
 
     // Affiche la barre "Suivant / Précédent" dès le chargement (étape 1 active).
