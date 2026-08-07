@@ -1180,10 +1180,18 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCalculations();
 
     // Lien direct depuis la sidebar (index.html?tab=autotests) : ouvre
-    // directement l'onglet Auto-tests au lieu de l'onglet Patient par défaut.
+    // directement l'onglet Auto-tests au lieu de l'onglet Patient par défaut
+    // (ce n'est plus un onglet visible dans la barre interne, uniquement
+    // accessible via ce lien direct).
     const requestedTab = new URLSearchParams(location.search).get('tab');
     if (requestedTab) {
-        const targetBtn = document.querySelector(`.nav-btn[data-tab="tab-${requestedTab}"]`);
-        if (targetBtn) targetBtn.click();
+        const targetPane = document.getElementById(`tab-${requestedTab}`);
+        if (targetPane) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+            targetPane.classList.add('active');
+            if (requestedTab === 'patients') loadDossiers();
+            if (requestedTab === 'autotests') loadAutotests();
+        }
     }
 });
