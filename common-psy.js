@@ -112,12 +112,17 @@ function renderSidebar(activeId) {
   `).join('');
 
   el.innerHTML = `
-    <div class="psy-sidebar-brand">
-      <i class="fa-solid fa-staff-snake"></i>
-      <div class="psy-sidebar-brand-text">
-        <span class="psy-sidebar-brand-title">SEIMEI — SUNA</span>
-        <span class="psy-sidebar-brand-sub">Branche Psychologique</span>
+    <div id="psy-sidebar-head">
+      <div class="psy-sidebar-brand">
+        <i class="fa-solid fa-staff-snake"></i>
+        <div class="psy-sidebar-brand-text">
+          <span class="psy-sidebar-brand-title">SEIMEI — SUNA</span>
+          <span class="psy-sidebar-brand-sub">Branche Psychologique</span>
+        </div>
       </div>
+      <button type="button" class="psy-sidebar-toggle" id="psy-sidebar-toggle" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
     </div>
     <nav class="psy-sidebar-nav">${itemsHtml}</nav>
     ${user ? `
@@ -134,4 +139,12 @@ function renderSidebar(activeId) {
 
   const logoutBtn = document.getElementById('psy-logout-btn');
   if (logoutBtn) logoutBtn.addEventListener('click', () => { logoutPsy(); });
+
+  // Menu mobile : replié par défaut, s'ouvre/se ferme via le bouton hamburger
+  // (invisible en desktop) et se referme après avoir choisi une page.
+  const toggleBtn = document.getElementById('psy-sidebar-toggle');
+  if (toggleBtn) toggleBtn.addEventListener('click', () => el.classList.toggle('open'));
+  el.querySelectorAll('.psy-nav-link').forEach(link => {
+    link.addEventListener('click', () => el.classList.remove('open'));
+  });
 }

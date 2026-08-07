@@ -179,12 +179,45 @@ body {
 
 .psy-sidebar-user-name { font-weight: 700; color: var(--text-primary); font-size: 14px; }
 
+.psy-sidebar-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--gold-light);
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Mobile : la sidebar devient une barre fine (marque + bouton menu) et
+   la navigation se replie en menu déroulant plutôt que de tout afficher
+   en vrac d'un coup. */
 @media (max-width: 900px) {
     .psy-shell { flex-direction: column; }
-    #psy-sidebar { position: static; width: auto; height: auto; border-right: none; border-bottom: 1px solid var(--border-color); }
-    .psy-sidebar-nav { flex-direction: row; flex-wrap: wrap; }
-    .psy-nav-link { width: auto; }
-    .psy-sidebar-foot { flex-direction: row; align-items: center; flex-wrap: wrap; }
+    #psy-sidebar {
+        position: sticky; top: 0; z-index: 60;
+        width: auto; height: auto; max-height: 100vh; overflow-y: auto;
+        border-right: none; border-bottom: 1px solid var(--border-color);
+    }
+    .psy-sidebar-brand { flex: 1; border-bottom: none; margin-bottom: 0; padding: 0; }
+    #psy-sidebar-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .psy-sidebar-toggle { display: inline-flex; }
+
+    .psy-sidebar-nav, .psy-sidebar-foot {
+        display: none;
+        flex-direction: column;
+        margin-top: 14px;
+        padding-top: 14px;
+        border-top: 1px solid var(--border-color);
+    }
+    #psy-sidebar.open .psy-sidebar-nav,
+    #psy-sidebar.open .psy-sidebar-foot { display: flex; }
+    .psy-sidebar-foot { margin-top: 0; }
+    .psy-nav-link { width: 100%; }
 }
 
 .app-container {
