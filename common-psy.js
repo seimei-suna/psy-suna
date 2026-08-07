@@ -75,7 +75,7 @@ const PSY_NAV_ITEMS = [
   { id: 'suivis', href: 'suivis.html', icon: 'fa-heart-pulse', label: 'Suivi Psychologique' },
   { id: 'formation', href: 'formation.html', icon: 'fa-graduation-cap', label: 'Formation & Communications' },
   { id: 'procedures', href: 'procedures.html', icon: 'fa-diagram-project', label: 'Procédures' },
-  { id: 'tarifs', href: 'tarifs.html', icon: 'fa-coins', label: 'Tarifs' },
+  { id: 'tarifs', href: 'tarifs.html', icon: 'fa-coins', label: 'Tarifs', public: true },
   { id: 'referentiel', href: 'referentiel.html', icon: 'fa-book', label: 'Référentiel' },
   { id: 'gerance', href: 'gerance.html', icon: 'fa-users-gear', label: 'Gérance', minRoles: ['gerance_psy', 'seimei'] }
 ];
@@ -94,8 +94,11 @@ function activityTargetLink(row) {
 }
 
 function canSee(item, user) {
+  // Non connecté : seules les pages publiques (ex. Tarifs) restent visibles —
+  // pas la peine d'afficher des liens qui mèneraient droit à l'écran de connexion.
+  if (!user) return !!item.public;
   if (!item.minRoles) return true;
-  return !!user && item.minRoles.includes(user.role);
+  return item.minRoles.includes(user.role);
 }
 
 function renderSidebar(activeId) {

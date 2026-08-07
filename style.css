@@ -304,10 +304,18 @@ body {
     .grid-2col, .grid-2col-unequal { grid-template-columns: 1fr; }
 }
 
+/* Toute table large (historique, tarifs) défile horizontalement dans son
+   propre conteneur plutôt que d'élargir la page entière. */
+.table-scroll-wrap, .table-responsive { overflow-x: auto; }
+
 /* Forms Styling */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .form-group.full-width { grid-column: span 2; }
+
+/* Empêche les champs (notamment les <select> aux longues options) de
+   forcer la grille — et donc toute la page — plus large que l'écran. */
+input, select, textarea { min-width: 0; max-width: 100%; }
 
 label {
     font-size: 12px;
@@ -714,3 +722,26 @@ input:checked + .slider:before { transform: translateX(26px); background-color: 
 .tarifs-table th, .tarifs-table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border-color); font-size: 14px; }
 .tarifs-table th { color: var(--gold); text-transform: uppercase; font-size: 11px; letter-spacing: .5px; }
 .tarifs-table td.price { font-weight: 700; color: var(--gold-light); white-space: nowrap; }
+
+/* ==========================================================================
+   MOBILE — téléphone (placé en fin de fichier pour gagner la cascade)
+   ========================================================================== */
+@media (max-width: 640px) {
+    .app-container { padding: 20px 14px 40px; gap: 16px; }
+    .card { padding: 16px; }
+    .form-grid { grid-template-columns: 1fr; gap: 12px; }
+    .form-group.full-width { grid-column: span 1; }
+    .pane-header h2 { font-size: 21px; }
+    .criterion-rating-buttons { gap: 6px; }
+    .criterion-rating-buttons .rate-btn { min-width: 64px; }
+    .modal-content { width: 94%; }
+    .modal-body { max-height: 65vh; overflow-y: auto; }
+    .score-circle { width: 130px; height: 130px; }
+    .score-number { font-size: 36px; }
+    .patients-toolbar, .psy-search-bar, .history-toolbar, .generator-toolbar, .report-controls { flex-direction: column; align-items: stretch; }
+    .patients-toolbar > *, .psy-search-bar > * { width: 100%; }
+    .patients-grid { grid-template-columns: 1fr; }
+    .dossier-actions, .membre-row-actions, .membre-row-tags { justify-content: flex-start; }
+    .doc-grid-info, .detail-grid { grid-template-columns: 1fr 1fr; }
+    table { font-size: 13px; }
+}
