@@ -2,7 +2,7 @@
    SEIMEI - SUNA : suivis.js — Suivi Psychologique + Rapports de Séance
    ========================================================================== */
 
-let suivisState = { rows: [], patients: [], currentSuivi: null, rapports: [], pendingStatut: null };
+let suivisState = { rows: [], patients: [], currentSuivi: null, rapports: [], pendingStatut: null, campEvaluation: null, campAnswers: [] };
 
 function nowIso() { return new Date().toISOString(); }
 function currentUserLabel() {
@@ -63,6 +63,7 @@ function renderSuivisList() {
                 <span class="dossier-name">${escapeHtml(r.patient_nom)}</span>
                 <span class="suivi-badge ${SUIVI_STATUT_CLASS[r.statut] || ''}">${SUIVI_STATUT_LABELS[r.statut] || r.statut}</span>
             </div>
+            ${r.categorie === 'camp_redressement' ? '<div class="categorie-badge" style="align-self:flex-start;"><i class="fa-solid fa-shield-halved"></i> Camp de redressement</div>' : ''}
             <div class="dossier-meta">Référent : ${escapeHtml(r.psy_referent_nom || '—')}</div>
             <div class="dossier-meta">Début : ${formatDateFr(r.date_debut)}${r.date_cloture ? ' · Clôturé le ' + formatDateFr(r.date_cloture) : ''}</div>
             <div class="dossier-actions">
@@ -96,6 +97,7 @@ async function openSuivi(id) {
     switchToDetailView();
     renderSuiviDetail();
     await loadRapports(id);
+    if (r.categorie === 'camp_redressement') await loadCampEvaluation(id);
 }
 
 function renderSuiviDetail() {
@@ -130,6 +132,138 @@ function renderSuiviDetail() {
         const btn = document.getElementById(`btn-statut-${s}`);
         if (btn) btn.disabled = (r.statut === s);
     });
+
+    document.getElementById('camp-eval-card').classList.toggle('hidden', r.categorie !== 'camp_redressement');
+}
+
+// --- Camp de Redressement : évaluation initiale (QCM 20 questions) ---
+
+async function loadCampEvaluation(suiviId) {
+    try {
+        const res = await sb.from('psy_camp_evaluations').select('*').eq('suivi_id', suiviId).order('created_at', { ascending: false }).limit(1);
+        if (res.error) throw new Error(res.error.message);
+        suivisState.campEvaluation = (res.data && res.data[0]) || null;
+        renderCampEvaluation();
+    } catch (e) {
+        console.warn('Chargement évaluation Camp impossible :', e);
+    }
+}
+
+function renderCampEvaluation() {
+    const emptyEl = document.getElementById('camp-eval-empty');
+    const resultEl = document.getElementById('camp-eval-result');
+    const ev = suivisState.campEvaluation;
+
+    if (!ev) {
+        emptyEl.classList.remove('hidden');
+        resultEl.classList.add('hidden');
+        return;
+    }
+    emptyEl.classList.add('hidden');
+    resultEl.classList.remove('hidden');
+
+    const tier = CAMP_DANGER_TIERS.find(t => t.id === ev.niveau_dangerosite) || getCampDangerTier(ev.score_total);
+    const reponses = Array.isArray(ev.reponses) ? ev.reponses : [];
+
+    resultEl.innerHTML = `
+        <div class="detail-grid">
+            <div><span>Score total</span><strong>${ev.score_total} / 60</strong></div>
+            <div><span>Niveau de dangerosité</span><strong>${escapeHtml(tier.label)}</strong></div>
+            <div><span>Évalué le</span><strong>${formatDateFr(ev.created_at)}</strong></div>
+            <div><span>Psychologue</span><strong>${escapeHtml(ev.psy_nom || '—')}</strong></div>
+        </div>
+        <div class="risque-badge ${tier.badgeClass}" style="margin-bottom:10px;">${escapeHtml(tier.label)}</div>
+        <p class="detail-text">${escapeHtml(tier.description)}</p>
+        <details style="margin-top:14px;">
+            <summary style="cursor:pointer; color: var(--gold); font-size:13px; font-weight:700;">Voir les 20 réponses notées</summary>
+            <ul class="detail-list" style="margin-top:10px;">
+                ${reponses.map((r, i) => `
+                    <li style="flex-direction:column; align-items:flex-start; gap:4px;">
+                        <span style="font-weight:700;">${i + 1}. ${escapeHtml(r.question)}</span>
+                        <span>${escapeHtml(r.reponse || '—')}</span>
+                        <strong>${r.points} pt${r.points > 1 ? 's' : ''}</strong>
+                    </li>
+                `).join('')}
+            </ul>
+        </details>
+    `;
+}
+
+function openCampQcmModal() {
+    suivisState.campAnswers = CAMP_QUESTIONS.map(() => ({ reponse: '', points: 1 }));
+    const container = document.getElementById('camp-qcm-questions');
+    container.innerHTML = CAMP_QUESTIONS.map((q, i) => `
+        <div class="form-group full-width" style="margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border-color);">
+            <label>${i + 1}. ${escapeHtml(q)}</label>
+            <textarea rows="2" class="camp-qcm-reponse" data-index="${i}" placeholder="Réponse du sujet..."></textarea>
+            <div style="display:flex; gap:6px; margin-top:6px;">
+                ${[1, 2, 3].map(p => `<button type="button" class="btn btn-secondary btn-sm camp-qcm-pts" data-index="${i}" data-pts="${p}">${p} pt${p > 1 ? 's' : ''}</button>`).join('')}
+            </div>
+        </div>
+    `).join('');
+
+    container.querySelectorAll('.camp-qcm-reponse').forEach(ta => {
+        ta.addEventListener('input', () => { suivisState.campAnswers[parseInt(ta.dataset.index)].reponse = ta.value; });
+    });
+    container.querySelectorAll('.camp-qcm-pts').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const idx = parseInt(btn.dataset.index);
+            suivisState.campAnswers[idx].points = parseInt(btn.dataset.pts);
+            container.querySelectorAll(`.camp-qcm-pts[data-index="${idx}"]`).forEach(b => b.classList.remove('btn-primary'));
+            container.querySelectorAll(`.camp-qcm-pts[data-index="${idx}"]`).forEach(b => b.classList.add('btn-secondary'));
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-primary');
+        });
+        // Point 1 sélectionné par défaut visuellement
+        if (parseInt(btn.dataset.pts) === 1) { btn.classList.remove('btn-secondary'); btn.classList.add('btn-primary'); }
+    });
+
+    document.getElementById('camp-qcm-error').textContent = '';
+    document.getElementById('modal-camp-qcm').classList.remove('hidden');
+}
+
+async function saveCampQcm() {
+    const errEl = document.getElementById('camp-qcm-error');
+    errEl.textContent = '';
+    const r = suivisState.currentSuivi;
+    if (!r) return;
+
+    const reponses = CAMP_QUESTIONS.map((q, i) => ({
+        question: q,
+        reponse: suivisState.campAnswers[i].reponse.trim(),
+        points: suivisState.campAnswers[i].points
+    }));
+    const missing = reponses.some(x => !x.reponse);
+    if (missing) { errEl.textContent = 'Merci de renseigner une réponse pour chaque question.'; return; }
+
+    const scoreTotal = reponses.reduce((sum, x) => sum + x.points, 0);
+    const tier = getCampDangerTier(scoreTotal);
+    const user = getCurrentUser();
+
+    const btn = document.getElementById('btn-save-camp-qcm');
+    btn.disabled = true;
+    try {
+        const row = {
+            suivi_id: r.id,
+            patient_id: r.patient_id,
+            patient_nom: r.patient_nom,
+            psy_id: user ? user.id : null,
+            psy_nom: currentUserLabel(),
+            reponses,
+            score_total: scoreTotal,
+            etat_mental: tier.label,
+            niveau_dangerosite: tier.id
+        };
+        const res = await sb.from('psy_camp_evaluations').insert([row]);
+        if (res.error) throw new Error(res.error.message);
+
+        document.getElementById('modal-camp-qcm').classList.add('hidden');
+        await loadCampEvaluation(r.id);
+    } catch (e) {
+        errEl.textContent = e.message;
+    } finally {
+        btn.disabled = false;
+    }
 }
 
 function openStatutModal(statut) {
@@ -254,6 +388,7 @@ function initNewSuiviModal() {
             const row = {
                 patient_id: pr.data,
                 patient_nom: patientNom,
+                categorie: document.getElementById('new-suivi-categorie').value,
                 psy_referent_id: user ? user.id : null,
                 psy_referent_nom: referentNom,
                 co_referent_nom: document.getElementById('new-suivi-coreferent').value.trim() || null,
@@ -353,4 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-close-statut-modal').addEventListener('click', () => document.getElementById('modal-statut-change').classList.add('hidden'));
     document.getElementById('btn-cancel-statut-modal').addEventListener('click', () => document.getElementById('modal-statut-change').classList.add('hidden'));
     document.getElementById('btn-confirm-statut-modal').addEventListener('click', confirmStatutChange);
+
+    document.getElementById('btn-open-camp-qcm').addEventListener('click', openCampQcmModal);
+    document.getElementById('btn-close-camp-qcm').addEventListener('click', () => document.getElementById('modal-camp-qcm').classList.add('hidden'));
+    document.getElementById('btn-cancel-camp-qcm').addEventListener('click', () => document.getElementById('modal-camp-qcm').classList.add('hidden'));
+    document.getElementById('btn-save-camp-qcm').addEventListener('click', saveCampQcm);
 });

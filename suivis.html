@@ -74,6 +74,18 @@
                     <ul class="detail-list" id="suivi-detail-historique"></ul>
                 </div>
 
+                <!-- Section spécifique Camp de Redressement : évaluation initiale QCM -->
+                <div class="card card-glass margin-top-md hidden" id="camp-eval-card">
+                    <div class="card-title"><i class="fa-solid fa-shield-halved"></i> Camp de Redressement — Évaluation initiale</div>
+                    <div id="camp-eval-empty">
+                        <p class="detail-text">Aucune évaluation initiale enregistrée pour ce suivi.</p>
+                        <button type="button" class="btn btn-primary margin-top-md" id="btn-open-camp-qcm">
+                            <i class="fa-solid fa-clipboard-question"></i> Remplir le questionnaire (20 questions)
+                        </button>
+                    </div>
+                    <div id="camp-eval-result" class="hidden"></div>
+                </div>
+
                 <div class="card card-glass margin-top-md">
                     <div class="card-title"><i class="fa-solid fa-pen-to-square"></i> Rapports de séance</div>
                     <button type="button" class="btn btn-primary" id="btn-open-new-rapport" style="margin-bottom: 14px;">
@@ -123,6 +135,13 @@
                         <label for="new-suivi-patient">Patient (nom & prénom)</label>
                         <input type="text" id="new-suivi-patient" list="suivis-patient-list" placeholder="Ex: Gaara du Désert" required>
                         <datalist id="suivis-patient-list"></datalist>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="new-suivi-categorie">Type de suivi</label>
+                        <select id="new-suivi-categorie">
+                            <option value="standard">Standard</option>
+                            <option value="camp_redressement">Camp de redressement</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="new-suivi-referent">Psychologue référent</label>
@@ -219,11 +238,31 @@
         </div>
     </div>
 
+    <!-- Modal : QCM Camp de Redressement (évaluation initiale) -->
+    <div id="modal-camp-qcm" class="modal-overlay hidden">
+        <div class="modal-content card" style="max-width: 720px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-shield-halved"></i> Questionnaire Psychologique — Évaluation Mentale</h3>
+                <button class="btn-close" id="btn-close-camp-qcm">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+                <p class="detail-text" style="margin-bottom: 14px;">Notez chaque réponse ouverte du sujet de 1 (sain) à 3 (préoccupant) selon votre jugement clinique.</p>
+                <div id="camp-qcm-questions"></div>
+                <p id="camp-qcm-error" style="color:#e74c3c; font-size:13px; margin-top:8px;"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-camp-qcm">Annuler</button>
+                <button type="button" class="btn btn-primary" id="btn-save-camp-qcm"><i class="fa-solid fa-floppy-disk"></i> Valider l'évaluation</button>
+            </div>
+        </div>
+    </div>
+
     <script src="supabase.js"></script>
     <script src="config.js"></script>
     <script src="common-psy.js"></script>
     <script src="auth.js"></script>
     <script src="data.js"></script>
+    <script src="camp-data.js"></script>
     <script src="suivis.js"></script>
 </body>
 </html>

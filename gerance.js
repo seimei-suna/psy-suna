@@ -34,6 +34,7 @@ function membreRowHtml(m) {
                     <span class="role-badge-${m.role}">${ROLE_LABELS[m.role] || m.role}</span>
                     <span class="categorie-badge">${CATEGORIE_LABELS[m.categorie] || m.categorie}</span>
                     <span class="categorie-badge">${STATUT_MEMBRE_LABELS[m.statut] || m.statut}</span>
+                    ${m.camp_redressement_affilie ? '<span class="categorie-badge" style="color:var(--gold);"><i class="fa-solid fa-shield-halved"></i> Camp de redressement</span>' : ''}
                 </div>
             </div>
             <div class="membre-row-actions">
@@ -42,6 +43,9 @@ function membreRowHtml(m) {
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="seimei" title="Seimei">Seimei</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-cat-btn" data-id="${m.id}" data-cat="${m.categorie === 'seimei_medical_psy' ? 'branche_psy_uniquement' : 'seimei_medical_psy'}" title="Basculer la catégorie">
                     <i class="fa-solid fa-repeat"></i>
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm mc-camp-btn" data-id="${m.id}" data-camp="${m.camp_redressement_affilie ? 'false' : 'true'}" title="Affilier / retirer du Camp de redressement">
+                    <i class="fa-solid fa-shield-halved"></i> ${m.camp_redressement_affilie ? 'Retirer' : 'Affilier'}
                 </button>
                 ${m.statut === 'actif'
                     ? `<button type="button" class="btn btn-danger btn-sm mc-statut-btn" data-id="${m.id}" data-statut="inactif">Désactiver</button>`
@@ -79,6 +83,9 @@ function bindMembreRowEvents() {
     });
     document.querySelectorAll('.mc-cat-btn').forEach(btn => {
         btn.addEventListener('click', (e) => { e.stopPropagation(); updateMembreField(btn.dataset.id, { categorie: btn.dataset.cat }); });
+    });
+    document.querySelectorAll('.mc-camp-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); updateMembreField(btn.dataset.id, { camp_redressement_affilie: btn.dataset.camp === 'true' }); });
     });
     document.querySelectorAll('.mc-statut-btn').forEach(btn => {
         btn.addEventListener('click', (e) => { e.stopPropagation(); updateMembreField(btn.dataset.id, { statut: btn.dataset.statut }); });
