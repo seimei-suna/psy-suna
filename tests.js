@@ -103,9 +103,12 @@ function renderTests() {
             <div class="dossier-decision">${escapeHtml(r.typeLabel)}</div>
             <div class="dossier-meta">Le ${formatDateFr(r.date)}${r.psy_nom ? ' — ' + escapeHtml(r.psy_nom) : ''}</div>
             ${r.source === 'test' ? `<div class="dossier-meta">${escapeHtml(r.statutLabel)}</div>` : ''}
-            <div class="dossier-actions">
+            <div class="dossier-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" class="btn btn-secondary btn-sm test-detail-btn" data-id="${r.id}" data-source="${r.source}">
                     <i class="fa-solid fa-eye"></i> Voir le détail
+                </button>
+                <button type="button" class="btn btn-danger btn-sm test-delete-btn" data-id="${r.id}" data-source="${r.source}">
+                    <i class="fa-solid fa-trash"></i> Supprimer
                 </button>
             </div>
         </div>
@@ -114,6 +117,21 @@ function renderTests() {
     listEl.querySelectorAll('.test-detail-btn').forEach(btn => {
         btn.addEventListener('click', () => openTestDetail(btn.dataset.id, btn.dataset.source));
     });
+    listEl.querySelectorAll('.test-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteTest(btn.dataset.id, btn.dataset.source));
+    });
+}
+
+async function deleteTest(id, source) {
+    if (!confirm('Supprimer définitivement ce test du registre ?')) return;
+    const table = source === 'evaluation' ? 'psy_evaluations' : 'psy_tests';
+    try {
+        const res = await sb.from(table).delete().eq('id', id);
+        if (res.error) throw new Error(res.error.message);
+        await loadTests();
+    } catch (e) {
+        alert('Suppression impossible : ' + e.message);
+    }
 }
 
 function openTestDetail(id, source) {
