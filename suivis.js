@@ -463,7 +463,9 @@ function initNewRapportModal() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    requireAuth(async () => {
+    requireAuth(async (user) => {
+        if (!requireRole(user, ['psychologue', 'gerance_psy', 'seimei'], null,
+            "Cet espace est réservé aux psychologues, à la Gérance et à la Seimei. Le grade Fudan Shō a accès aux Résultats Camp de Redressement.")) return;
         await loadSuivis();
         loadPatientsList();
         const openId = new URLSearchParams(location.search).get('openSuivi');

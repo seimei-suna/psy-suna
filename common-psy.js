@@ -35,7 +35,7 @@ function formatDateTimeFr(dateStr) {
 }
 
 // --- Libellés partagés ---
-const ROLE_LABELS = { psychologue: 'Psychologue', gerance_psy: 'Gérance Branche Psy', seimei: 'Seimei' };
+const ROLE_LABELS = { psychologue: 'Psychologue', gerance_psy: 'Gérance Branche Psy', seimei: 'Seimei', fudan_sho: 'Fudan Shō' };
 const CATEGORIE_LABELS = { seimei_medical_psy: 'Seimei médical & psy', branche_psy_uniquement: 'Branche psychologie uniquement' };
 const STATUT_MEMBRE_LABELS = { en_attente: 'En attente', actif: 'Actif', inactif: 'Inactif' };
 
@@ -68,14 +68,19 @@ const ACTION_TYPE_ICONS = {
 };
 
 // --- Navigation commune ---
+// Le grade Fudan Shō n'a accès qu'aux résultats du Camp de Redressement
+// (voir camp-resultats.html) et aux Tarifs : toutes les autres pages
+// listent explicitement les rôles psychologue/gerance_psy/seimei pour
+// rester fermées à ce grade.
 const PSY_NAV_ITEMS = [
-  { id: 'autotests', href: 'index.html?tab=autotests', icon: 'fa-clipboard-user', label: 'Auto-tests' },
-  { id: 'tests', href: 'tests.html', icon: 'fa-vial-circle-check', label: 'Registre des Tests' },
-  { id: 'suivis', href: 'suivis.html', icon: 'fa-heart-pulse', label: 'Suivi Psychologique' },
-  { id: 'formation', href: 'formation.html', icon: 'fa-graduation-cap', label: 'Formation & Communications' },
-  { id: 'procedures', href: 'procedures.html', icon: 'fa-diagram-project', label: 'Procédures' },
+  { id: 'autotests', href: 'index.html?tab=autotests', icon: 'fa-clipboard-user', label: 'Auto-tests', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
+  { id: 'tests', href: 'tests.html', icon: 'fa-vial-circle-check', label: 'Registre des Tests', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
+  { id: 'suivis', href: 'suivis.html', icon: 'fa-heart-pulse', label: 'Suivi Psychologique', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
+  { id: 'camp-resultats', href: 'camp-resultats.html', icon: 'fa-scale-balanced', label: 'Résultats Camp de Redressement', minRoles: ['fudan_sho', 'gerance_psy', 'seimei'] },
+  { id: 'formation', href: 'formation.html', icon: 'fa-graduation-cap', label: 'Formation & Communications', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
+  { id: 'procedures', href: 'procedures.html', icon: 'fa-diagram-project', label: 'Procédures', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
   { id: 'tarifs', href: 'tarifs.html', icon: 'fa-coins', label: 'Tarifs', public: true },
-  { id: 'referentiel', href: 'referentiel.html', icon: 'fa-book', label: 'Référentiel' },
+  { id: 'referentiel', href: 'referentiel.html', icon: 'fa-book', label: 'Référentiel', minRoles: ['psychologue', 'gerance_psy', 'seimei'] },
   { id: 'gerance', href: 'gerance.html', icon: 'fa-users-gear', label: 'Gérance', minRoles: ['gerance_psy', 'seimei'] }
 ];
 

@@ -201,13 +201,13 @@ function requireAuth(callback) {
 // dans le callback de requireAuth(). Affiche un message et bloque le
 // rendu du contenu si le rôle ne convient pas (barrière côté client,
 // cohérente avec le reste du site — voir SECURITY.md).
-function requireRole(user, roles, containerId) {
+function requireRole(user, roles, containerId, message) {
   if (hasAnyRole(user, roles)) return true;
   const el = document.getElementById(containerId || 'psy-app');
   if (el) {
     el.innerHTML = `<div class="card card-glass" style="max-width:520px; margin:60px auto; text-align:center;">
       <i class="fa-solid fa-triangle-exclamation" style="font-size:28px; color:#e74c3c;"></i>
-      <p style="margin-top:12px;">Cet espace est réservé à la Gérance de la branche psychologique et à la Seimei.</p>
+      <p style="margin-top:12px;">${message || 'Cet espace est réservé à la Gérance de la branche psychologique et à la Seimei.'}</p>
     </div>`;
   }
   return false;

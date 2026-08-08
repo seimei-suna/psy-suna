@@ -97,6 +97,11 @@
     <script src="data.js"></script>
     <script src="scenarios.js"></script>
     <script src="referentiel.js"></script>
-    <script>requireAuth();</script>
+    <script>
+        requireAuth((user) => {
+            requireRole(user, ['psychologue', 'gerance_psy', 'seimei'], null,
+                "Cet espace est réservé aux psychologues, à la Gérance et à la Seimei. Le grade Fudan Shō a accès aux Résultats Camp de Redressement.");
+        });
+    </script>
 </body>
 </html>

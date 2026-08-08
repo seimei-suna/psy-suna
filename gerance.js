@@ -41,6 +41,7 @@ function membreRowHtml(m) {
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="psychologue" title="Psychologue">Psy</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="gerance_psy" title="Gérance Branche Psy">Gérance</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="seimei" title="Seimei">Seimei</button>
+                <button type="button" class="btn btn-secondary btn-sm mc-role-btn" data-id="${m.id}" data-role="fudan_sho" title="Fudan Shō — accès aux résultats Camp de Redressement uniquement">Fudan Shō</button>
                 <button type="button" class="btn btn-secondary btn-sm mc-cat-btn" data-id="${m.id}" data-cat="${m.categorie === 'seimei_medical_psy' ? 'branche_psy_uniquement' : 'seimei_medical_psy'}" title="Basculer la catégorie">
                     <i class="fa-solid fa-repeat"></i>
                 </button>

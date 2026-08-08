@@ -73,8 +73,10 @@ async function deleteProcedure(id) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    requireAuth(() => {
-        const canManage = hasAnyRole(getCurrentUser(), ['gerance_psy', 'seimei']);
+    requireAuth((user) => {
+        if (!requireRole(user, ['psychologue', 'gerance_psy', 'seimei'], null,
+            "Cet espace est réservé aux psychologues, à la Gérance et à la Seimei. Le grade Fudan Shō a accès aux Résultats Camp de Redressement.")) return;
+        const canManage = hasAnyRole(user, ['gerance_psy', 'seimei']);
         document.getElementById('procedures-edit-card').classList.toggle('hidden', !canManage);
         loadProcedures();
     });
