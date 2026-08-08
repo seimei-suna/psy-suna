@@ -199,7 +199,7 @@ function renderCampEvaluation() {
                     <li style="flex-direction:column; align-items:flex-start; gap:4px;">
                         <span style="font-weight:700;">${i + 1}. ${escapeHtml(r.question)}</span>
                         <span>${escapeHtml(r.reponse || '—')}</span>
-                        <strong>${r.points} pt${r.points > 1 ? 's' : ''}</strong>
+                        <strong>${r.points} — ${CAMP_QCM_POINT_LABELS[r.points] || ''}</strong>
                     </li>
                 `).join('')}
             </ul>
@@ -207,15 +207,19 @@ function renderCampEvaluation() {
     `;
 }
 
+// Barème "qualité de la réponse" affiché sur les boutons du QCM :
+// 1 = réponse alarmante/nulle, 2 = modérée, 3 = réponse saine/bonne.
+const CAMP_QCM_POINT_LABELS = { 1: 'Nul', 2: 'Moyen', 3: 'Bien' };
+
 function openCampQcmModal() {
-    suivisState.campAnswers = CAMP_QUESTIONS.map(() => ({ reponse: '', points: 1 }));
+    suivisState.campAnswers = CAMP_QUESTIONS.map(() => ({ reponse: '', points: 3 }));
     const container = document.getElementById('camp-qcm-questions');
     container.innerHTML = CAMP_QUESTIONS.map((q, i) => `
         <div class="form-group full-width" style="margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border-color);">
             <label>${i + 1}. ${escapeHtml(q)}</label>
             <textarea rows="2" class="camp-qcm-reponse" data-index="${i}" placeholder="Réponse du sujet..."></textarea>
             <div style="display:flex; gap:6px; margin-top:6px;">
-                ${[1, 2, 3].map(p => `<button type="button" class="btn btn-secondary btn-sm camp-qcm-pts" data-index="${i}" data-pts="${p}">${p} pt${p > 1 ? 's' : ''}</button>`).join('')}
+                ${[1, 2, 3].map(p => `<button type="button" class="btn btn-secondary btn-sm camp-qcm-pts" data-index="${i}" data-pts="${p}">${p} — ${CAMP_QCM_POINT_LABELS[p]}</button>`).join('')}
             </div>
         </div>
     `).join('');
@@ -232,8 +236,8 @@ function openCampQcmModal() {
             btn.classList.remove('btn-secondary');
             btn.classList.add('btn-primary');
         });
-        // Point 1 sélectionné par défaut visuellement
-        if (parseInt(btn.dataset.pts) === 1) { btn.classList.remove('btn-secondary'); btn.classList.add('btn-primary'); }
+        // Point 3 (Bien) sélectionné par défaut visuellement
+        if (parseInt(btn.dataset.pts) === 3) { btn.classList.remove('btn-secondary'); btn.classList.add('btn-primary'); }
     });
 
     document.getElementById('camp-qcm-error').textContent = '';
