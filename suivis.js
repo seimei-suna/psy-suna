@@ -66,9 +66,12 @@ function renderSuivisList() {
             ${r.categorie === 'camp_redressement' ? '<div class="categorie-badge" style="align-self:flex-start;"><i class="fa-solid fa-shield-halved"></i> Camp de redressement</div>' : ''}
             <div class="dossier-meta">Référent : ${escapeHtml(r.psy_referent_nom || '—')}</div>
             <div class="dossier-meta">Début : ${formatDateFr(r.date_debut)}${r.date_cloture ? ' · Clôturé le ' + formatDateFr(r.date_cloture) : ''}</div>
-            <div class="dossier-actions">
+            <div class="dossier-actions" style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" class="btn btn-secondary btn-sm suivi-open-btn" data-id="${r.id}">
                     <i class="fa-solid fa-folder-open"></i> Ouvrir la fiche
+                </button>
+                <button type="button" class="btn btn-danger btn-sm suivi-delete-btn" data-id="${r.id}">
+                    <i class="fa-solid fa-trash"></i> Supprimer
                 </button>
             </div>
         </div>
@@ -77,6 +80,21 @@ function renderSuivisList() {
     listEl.querySelectorAll('.suivi-open-btn').forEach(btn => {
         btn.addEventListener('click', () => openSuivi(parseInt(btn.dataset.id)));
     });
+    listEl.querySelectorAll('.suivi-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => deleteSuivi(parseInt(btn.dataset.id)));
+    });
+}
+
+async function deleteSuivi(id) {
+    if (!confirm('Supprimer définitivement ce suivi (et son historique de rapports/évaluations) ?')) return;
+    try {
+        const res = await sb.from('psy_suivis').delete().eq('id', id);
+        if (res.error) throw new Error(res.error.message);
+        if (suivisState.currentSuivi && suivisState.currentSuivi.id === id) switchToListView();
+        await loadSuivis();
+    } catch (e) {
+        alert('Suppression impossible : ' + e.message);
+    }
 }
 
 function switchToListView() {
@@ -486,6 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     ['actif', 'pause', 'inactif'].forEach(s => {
         document.getElementById(`btn-statut-${s}`).addEventListener('click', () => openStatutModal(s));
+    });
+    document.getElementById('btn-delete-suivi').addEventListener('click', () => {
+        if (suivisState.currentSuivi) deleteSuivi(suivisState.currentSuivi.id);
     });
     document.getElementById('btn-close-statut-modal').addEventListener('click', () => document.getElementById('modal-statut-change').classList.add('hidden'));
     document.getElementById('btn-cancel-statut-modal').addEventListener('click', () => document.getElementById('modal-statut-change').classList.add('hidden'));
