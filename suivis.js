@@ -208,8 +208,8 @@ function renderCampEvaluation() {
 }
 
 // Barème "qualité de la réponse" affiché sur les boutons du QCM :
-// 1 = réponse alarmante/nulle, 2 = modérée, 3 = réponse saine/bonne.
-const CAMP_QCM_POINT_LABELS = { 1: 'Nul', 2: 'Moyen', 3: 'Bien' };
+// 0 = réponse extrêmement alarmante, 1 = nulle, 2 = modérée, 3 = saine/bonne.
+const CAMP_QCM_POINT_LABELS = { 0: 'Très alarmant', 1: 'Nul', 2: 'Moyen', 3: 'Bien' };
 
 function openCampQcmModal() {
     suivisState.campAnswers = CAMP_QUESTIONS.map(() => ({ reponse: '', points: 3 }));
@@ -219,7 +219,7 @@ function openCampQcmModal() {
             <label>${i + 1}. ${escapeHtml(q)}</label>
             <textarea rows="2" class="camp-qcm-reponse" data-index="${i}" placeholder="Réponse du sujet..."></textarea>
             <div style="display:flex; gap:6px; margin-top:6px;">
-                ${[1, 2, 3].map(p => `<button type="button" class="btn btn-secondary btn-sm camp-qcm-pts" data-index="${i}" data-pts="${p}">${p} — ${CAMP_QCM_POINT_LABELS[p]}</button>`).join('')}
+                ${[0, 1, 2, 3].map(p => `<button type="button" class="btn btn-secondary btn-sm camp-qcm-pts" data-index="${i}" data-pts="${p}">${p} — ${CAMP_QCM_POINT_LABELS[p]}</button>`).join('')}
             </div>
         </div>
     `).join('');

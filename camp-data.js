@@ -31,9 +31,9 @@ const CAMP_QUESTIONS = [
     "Si vous pouviez faire disparaître toute votre douleur en échange de celle d'un inconnu, accepteriez-vous ?"
 ];
 
-// Score total possible : 20 (20 x 1pt, réponses les plus alarmantes) à 60
+// Score total possible : 0 (20 x 0pt, réponses les plus alarmantes) à 60
 // (20 x 3pts, réponses les plus saines). Barème "qualité de la réponse" :
-// 1 = réponse alarmante/nulle, 2 = modérée, 3 = réponse saine/bonne.
+// 0 = réponse extrêmement alarmante, 1 = nulle, 2 = modérée, 3 = saine/bonne.
 // Un score BAS traduit donc un niveau de dangerosité ÉLEVÉ, et inversement.
 const CAMP_DANGER_TIERS = [
     {
@@ -52,7 +52,7 @@ const CAMP_DANGER_TIERS = [
     },
     {
         id: 'eleve',
-        min: 20, max: 33,
+        min: 0, max: 33,
         label: 'ÉLEVÉ',
         badgeClass: 'risque-urgent',
         description: "Le sujet présente une forte désensibilisation émotionnelle, une fascination pour la violence, une rupture importante avec l'empathie humaine, ainsi qu'un risque élevé de comportement dangereux ou homicidaire. Le sujet peut représenter une menace directe pour son entourage et pour la stabilité du village."
