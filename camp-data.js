@@ -52,10 +52,17 @@ const CAMP_DANGER_TIERS = [
     },
     {
         id: 'eleve',
-        min: 0, max: 33,
+        min: 17, max: 33,
         label: 'ÉLEVÉ',
         badgeClass: 'risque-urgent',
         description: "Le sujet présente une forte désensibilisation émotionnelle, une fascination pour la violence, une rupture importante avec l'empathie humaine, ainsi qu'un risque élevé de comportement dangereux ou homicidaire. Le sujet peut représenter une menace directe pour son entourage et pour la stabilité du village."
+    },
+    {
+        id: 'tres_eleve',
+        min: 0, max: 16,
+        label: 'TRÈS ÉLEVÉ',
+        badgeClass: 'risque-critique',
+        description: "Le sujet présente un état psychologique gravement altéré : désensibilisation quasi totale, absence d'empathie, fascination marquée pour la violence et/ou la mort, risque homicidaire ou suicidaire imminent. Le sujet constitue une menace immédiate pour lui-même, son entourage et la stabilité du village — une prise en charge d'urgence et un encadrement renforcé sont impératifs."
     }
 ];
 

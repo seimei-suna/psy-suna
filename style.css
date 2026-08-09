@@ -716,6 +716,7 @@ input:checked + .slider:before { transform: translateX(26px); background-color: 
 .risque-a_surveiller { background: rgba(217, 179, 76, .12); color: #f0dfa0; }
 .risque-preoccupant { background: rgba(209, 138, 74, .16); color: #f0c8a0; }
 .risque-urgent { background: var(--status-red); color: #1a0806; }
+.risque-critique { background: #7a0d0d; color: #ffd8d8; box-shadow: 0 0 0 1px #ff4444 inset; }
 
 /* --- Barre de recherche (Gérance, listes) --- */
 .psy-search-bar { display: flex; gap: 10px; margin-bottom: 18px; }
